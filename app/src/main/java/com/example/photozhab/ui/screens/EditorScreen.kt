@@ -70,6 +70,7 @@ fun EditorScreen(viewModel: PhotozhabViewModel = viewModel()) {
             }
         }
         ToolPanel(
+            isBrushChosen = isBrushChosen,
             addFigure = viewModel::addFigure,
             changeIsBrushChosen = { isBrushChosen = !isBrushChosen },
             onPrevStateClick = viewModel::prevState,
@@ -118,6 +119,7 @@ fun DrawingCanvas(
                         },
                         onDragEnd = {
                             addFigure(Brush(tempPath))
+                            pathList.clear()
                         }
                     )
                 }
@@ -135,14 +137,15 @@ fun DrawingCanvas(
 
 @Composable
 fun ToolPanel(
+    isBrushChosen: Boolean,
     onPrevStateClick: () -> Unit,
     onForwardStateClick: () -> Unit,
     addFigure: (Figure) -> Unit,
     changeIsBrushChosen: () -> Unit
 ) {
     Column {
-        StateFiguresButtonPanel(onPrevStateClick, onForwardStateClick)
-        FiguresButtonPanel(addFigure) {
+        StateFiguresButtonPanel(isBrushChosen, onPrevStateClick, onForwardStateClick, changeIsBrushChosen)
+        FiguresButtonPanel(isBrushChosen, addFigure) {
             changeIsBrushChosen()
         }
     }
@@ -150,15 +153,15 @@ fun ToolPanel(
 
 @Composable
 fun StateFiguresButtonPanel(
+    isBrushChosen: Boolean,
     onPrevStateClick: () -> Unit,
-    onForwardStateClick: () -> Unit
+    onForwardStateClick: () -> Unit,
+    changeIsBrushChosen: () -> Unit
 ) {
     Row(
         horizontalArrangement = Arrangement.Center
     ) {
-        IconButton(
-            onClick = onPrevStateClick
-        ) {
+        IconButton(onClick = onPrevStateClick) {
             Icon(Icons.Default.ArrowBack, "Previous state")
         }
         IconButton(
@@ -172,6 +175,7 @@ fun StateFiguresButtonPanel(
 
 @Composable
 fun FiguresButtonPanel(
+    isBrushChosen: Boolean,
     addFigure: (Figure) -> Unit,
     changeIsChosen: () -> Unit
 ) {
@@ -181,9 +185,7 @@ fun FiguresButtonPanel(
         ButtonPanelSettings("Triangle") { addFigure(Triangle()) },
         ButtonPanelSettings("Polygon") { addFigure(Polygon()) },
         ButtonPanelSettings("Line") { addFigure(Line()) },
-        ButtonPanelSettings("Brush") {
-            changeIsChosen()
-        }
+        ButtonPanelSettings("Brush") { changeIsChosen() }
     )
 
     LazyRow(
@@ -192,7 +194,10 @@ fun FiguresButtonPanel(
         verticalAlignment = Alignment.CenterVertically
     ) {
         items(buttons) { button ->
-            Button(onClick = button.onClick) {
+            Button(
+                onClick = button.onClick,
+                enabled = if (button.textName != "Brush") !isBrushChosen else true // TODO("Доделать")
+            ) {
                 Text(button.textName)
             }
         }

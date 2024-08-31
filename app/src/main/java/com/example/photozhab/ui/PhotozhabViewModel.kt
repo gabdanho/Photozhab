@@ -3,9 +3,11 @@ package com.example.photozhab.ui
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
+import com.example.photozhab.model.Brush
 import com.example.photozhab.model.Figure
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 
 data class PhotozhabUiState(val figures: SnapshotStateList<Figure> = mutableStateListOf())
 
