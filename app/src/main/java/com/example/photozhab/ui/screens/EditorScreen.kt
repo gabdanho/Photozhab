@@ -6,19 +6,26 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -28,6 +35,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.photozhab.model.Brush
 import com.example.photozhab.model.ButtonPanelSettings
@@ -41,10 +49,8 @@ import com.example.photozhab.model.Triangle
 import com.example.photozhab.ui.PhotozhabViewModel
 
 @Composable
-fun EditorScreen(
-    modifier: Modifier = Modifier
-) {
-    val viewModel: PhotozhabViewModel = viewModel()
+fun EditorScreen(viewModel: PhotozhabViewModel = viewModel()) {
+    val uiState by viewModel.uiState.collectAsState()
     var isBrushChosen by remember { mutableStateOf(false) }
 
     Column {
@@ -56,45 +62,19 @@ fun EditorScreen(
                 .weight(1f)
                 .clipToBounds()
         ) {
-            viewModel.figures.forEach { figure ->
+            uiState.figures.forEach { figure ->
                 figure.draw()
             }
             if (isBrushChosen) {
                 DrawingCanvas(isBrushChosen, viewModel::addFigure)
             }
         }
-        FiguresButtonPanel(viewModel::addFigure) {
-            isBrushChosen = !isBrushChosen
-        }
-    }
-}
-
-@Composable
-fun FiguresButtonPanel(
-    addFigure: (Figure) -> Unit,
-    changeIsChosen: () -> Unit
-) {
-    val buttons = listOf(
-        ButtonPanelSettings("Circle") { addFigure(Circle()) },
-        ButtonPanelSettings("Square") { addFigure(Square()) },
-        ButtonPanelSettings("Triangle") { addFigure(Triangle()) },
-        ButtonPanelSettings("Polygon") { addFigure(Polygon()) },
-        ButtonPanelSettings("Line") { addFigure(Line()) },
-        ButtonPanelSettings("Brush") {
-            changeIsChosen()
-        }
-    )
-
-    LazyRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        items(buttons) { button ->
-            Button(onClick = button.onClick) {
-                Text(button.textName)
-            }
-        }
+        ToolPanel(
+            addFigure = viewModel::addFigure,
+            changeIsBrushChosen = { isBrushChosen = !isBrushChosen },
+            onPrevStateClick = viewModel::prevState,
+            onForwardStateClick = viewModel::forwardState
+        )
     }
 }
 
@@ -149,6 +129,72 @@ fun DrawingCanvas(
                 path = it.path,
                 style = Stroke(it.width, cap = StrokeCap.Round)
             )
+        }
+    }
+}
+
+@Composable
+fun ToolPanel(
+    onPrevStateClick: () -> Unit,
+    onForwardStateClick: () -> Unit,
+    addFigure: (Figure) -> Unit,
+    changeIsBrushChosen: () -> Unit
+) {
+    Column {
+        StateFiguresButtonPanel(onPrevStateClick, onForwardStateClick)
+        FiguresButtonPanel(addFigure) {
+            changeIsBrushChosen()
+        }
+    }
+}
+
+@Composable
+fun StateFiguresButtonPanel(
+    onPrevStateClick: () -> Unit,
+    onForwardStateClick: () -> Unit
+) {
+    Row(
+        horizontalArrangement = Arrangement.Center
+    ) {
+        IconButton(
+            onClick = onPrevStateClick
+        ) {
+            Icon(Icons.Default.ArrowBack, "Previous state")
+        }
+        IconButton(
+            modifier = Modifier.padding(end = 4.dp),
+            onClick = onForwardStateClick
+        ) {
+            Icon(Icons.Default.ArrowForward, "Forward state")
+        }
+    }
+}
+
+@Composable
+fun FiguresButtonPanel(
+    addFigure: (Figure) -> Unit,
+    changeIsChosen: () -> Unit
+) {
+    val buttons = listOf(
+        ButtonPanelSettings("Circle") { addFigure(Circle()) },
+        ButtonPanelSettings("Square") { addFigure(Square()) },
+        ButtonPanelSettings("Triangle") { addFigure(Triangle()) },
+        ButtonPanelSettings("Polygon") { addFigure(Polygon()) },
+        ButtonPanelSettings("Line") { addFigure(Line()) },
+        ButtonPanelSettings("Brush") {
+            changeIsChosen()
+        }
+    )
+
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        items(buttons) { button ->
+            Button(onClick = button.onClick) {
+                Text(button.textName)
+            }
         }
     }
 }
