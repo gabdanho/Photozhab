@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -26,11 +25,10 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawContext
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.photozhab.model.Brush
 import com.example.photozhab.model.ButtonPanelSettings
 import com.example.photozhab.model.Circle
@@ -40,13 +38,13 @@ import com.example.photozhab.model.PathData
 import com.example.photozhab.model.Polygon
 import com.example.photozhab.model.Square
 import com.example.photozhab.model.Triangle
-import kotlinx.coroutines.withContext
+import com.example.photozhab.ui.PhotozhabViewModel
 
 @Composable
 fun EditorScreen(
     modifier: Modifier = Modifier
 ) {
-    val figures = remember { mutableStateListOf<Figure>() }
+    val viewModel: PhotozhabViewModel = viewModel()
     var isBrushChosen by remember { mutableStateOf(false) }
 
     Column {
@@ -58,14 +56,14 @@ fun EditorScreen(
                 .weight(1f)
                 .clipToBounds()
         ) {
-            figures.forEach { figure ->
+            viewModel.figures.forEach { figure ->
                 figure.draw()
             }
             if (isBrushChosen) {
-                DrawingCanvas(isBrushChosen, figures)
+                DrawingCanvas(isBrushChosen, viewModel::addFigure)
             }
         }
-        FiguresButtonPanel(figures) {
+        FiguresButtonPanel(viewModel::addFigure) {
             isBrushChosen = !isBrushChosen
         }
     }
@@ -73,15 +71,15 @@ fun EditorScreen(
 
 @Composable
 fun FiguresButtonPanel(
-    figures: SnapshotStateList<Figure>,
+    addFigure: (Figure) -> Unit,
     changeIsChosen: () -> Unit
 ) {
     val buttons = listOf(
-        ButtonPanelSettings("Circle") { figures.add(Circle()) },
-        ButtonPanelSettings("Square") { figures.add(Square()) },
-        ButtonPanelSettings("Triangle") { figures.add(Triangle()) },
-        ButtonPanelSettings("Polygon") { figures.add(Polygon()) },
-        ButtonPanelSettings("Line") { figures.add(Line()) },
+        ButtonPanelSettings("Circle") { addFigure(Circle()) },
+        ButtonPanelSettings("Square") { addFigure(Square()) },
+        ButtonPanelSettings("Triangle") { addFigure(Triangle()) },
+        ButtonPanelSettings("Polygon") { addFigure(Polygon()) },
+        ButtonPanelSettings("Line") { addFigure(Line()) },
         ButtonPanelSettings("Brush") {
             changeIsChosen()
         }
@@ -97,18 +95,13 @@ fun FiguresButtonPanel(
                 Text(button.textName)
             }
         }
-        println()
-        println("START LIST")
-        figures.forEach { println(it.toString()) }
-        println("END LIST")
-        println()
     }
 }
 
 @Composable
 fun DrawingCanvas(
     isChosen: Boolean,
-    figures: SnapshotStateList<Figure>
+    addFigure: (Figure) -> Unit
 ) {
     val pathData = remember { mutableStateOf(PathData()) }
     var tempPath by remember { mutableStateOf(Path()) }
@@ -144,7 +137,7 @@ fun DrawingCanvas(
                             tempPath = Path()
                         },
                         onDragEnd = {
-                            figures.add(Brush(tempPath))
+                            addFigure(Brush(tempPath))
                         }
                     )
                 }

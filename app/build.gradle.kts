@@ -61,6 +61,8 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     // Graphics shapes
     implementation("androidx.graphics:graphics-shapes:1.0.0-rc01")
+    // ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
