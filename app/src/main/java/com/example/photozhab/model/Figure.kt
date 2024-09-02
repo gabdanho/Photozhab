@@ -36,6 +36,7 @@ interface Figure {
 }
 
 data class Circle(
+    val color: Color,
     var offset: Offset = Offset.Zero,
     var angle: Float = 0f,
     var scale: Float = 1f
@@ -67,7 +68,7 @@ data class Circle(
         ) {
             drawCircle(
                 radius = 200.dp.toPx() / 2,
-                color = Color.Green
+                color = color
             )
         }
     }
@@ -81,13 +82,10 @@ data class Circle(
         angle = localAngle
         scale = localScale
     }
-
-    override fun toString(): String {
-        return "Circle()"
-    }
 }
 
 data class Square(
+    val color: Color,
     var offset: Offset = Offset.Zero,
     var angle: Float = 0f,
     var scale: Float = 1f
@@ -118,7 +116,7 @@ data class Square(
                 }
         ) {
             drawRect(
-                color = Color.Blue,
+                color = color,
                 size = this.size
             )
         }
@@ -133,13 +131,10 @@ data class Square(
         angle = localAngle
         scale = localScale
     }
-
-    override fun toString(): String {
-        return "Square()"
-    }
 }
 
 data class Triangle(
+    val color: Color,
     var offset: Offset = Offset.Zero,
     var angle: Float = 0f,
     var scale: Float = 1f
@@ -177,7 +172,7 @@ data class Triangle(
                 lineTo(triangleSide, height)
                 close()
             }
-            drawPath(path, Color.Red)
+            drawPath(path, color)
         }
     }
 
@@ -190,13 +185,11 @@ data class Triangle(
         angle = localAngle
         scale = localScale
     }
-
-    override fun toString(): String {
-        return "Triangle()"
-    }
 }
 
 data class Polygon(
+    val color: Color,
+    val vertices: Int,
     var offset: Offset = Offset.Zero,
     var angle: Float = 0f,
     var scale: Float = 1f
@@ -227,14 +220,14 @@ data class Polygon(
                 }
         ) {
             val roundedPolygon = RoundedPolygon(
-                numVertices = 5, // позволить пользователю выбрать n-ое кол-во вершин
+                numVertices = vertices, // позволить пользователю выбрать n-ое кол-во вершин
                 radius = size.minDimension / 2,
                 centerX = size.width / 2,
                 centerY = size.width / 2
             )
             val roundedPolygonPath = roundedPolygon.toPath().asComposePath()
 
-            drawPath(roundedPolygonPath, Color.Yellow)
+            drawPath(roundedPolygonPath, color)
         }
     }
 
@@ -247,13 +240,11 @@ data class Polygon(
         angle = localAngle
         scale = localScale
     }
-
-    override fun toString(): String {
-        return "Polygon()"
-    }
 }
 
 data class Line(
+    val color: Color,
+    val lineWidth: Float,
     var offset: Offset = Offset.Zero,
     var angle: Float = 0f,
     var widthDp: Dp = 200.dp
@@ -290,8 +281,8 @@ data class Line(
             drawLine(
                 start = Offset(0f, size.height / 2),
                 end = Offset(widthPx, size.height / 2),
-                color = Color.Green,
-                strokeWidth = 10f
+                color = color,
+                strokeWidth = lineWidth
             )
         }
     }
@@ -305,20 +296,20 @@ data class Line(
         angle = localAngle
         widthDp = localWidthDp
     }
-
-    override fun toString(): String {
-        return "Line()"
-    }
 }
 
-data class Brush(var path: Path = Path()) : Figure {
+data class Brush(
+    val color: Color,
+    val brushWidth: Float,
+    var path: Path = Path()
+) : Figure {
     @Composable
     override fun draw() {
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawPath(
                 path = path,
-                color = Color.Blue,
-                style = Stroke(5f, cap = StrokeCap.Round)
+                color = color,
+                style = Stroke(brushWidth, cap = StrokeCap.Round)
             )
         }
     }
