@@ -22,9 +22,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun VerticesPicker(currentVertices: Int, changeVertices: (Int) -> Unit) {
     var vertices by remember { mutableStateOf(currentVertices.toFloat() / 100) }
-    println(vertices)
     var verticesResult by remember { mutableStateOf(currentVertices) }
-    println(verticesResult)
 
     LaunchedEffect(verticesResult) {
         changeVertices(verticesResult)

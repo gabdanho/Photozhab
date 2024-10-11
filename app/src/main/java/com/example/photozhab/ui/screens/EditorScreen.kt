@@ -185,7 +185,6 @@ fun DrawingCanvas(
                         tempPath = Path()
                     },
                     onDragEnd = {
-                        println("onDragEnd: $brushColor")
                         addFigure(Brush(currentBrushColor, currentBrushWidth, tempPath))
                         pathList.clear()
                     }
@@ -193,7 +192,6 @@ fun DrawingCanvas(
             }
     ) {
         pathList.forEach {
-            println("drawPath: $brushColor")
             drawPath(
                 color = currentBrushColor,
                 path = it.path,
@@ -287,7 +285,6 @@ fun FiguresButtonPanel(
                                     button.onClick()
                                 },
                                 onLongPress = {
-                                    println("onLongPress")
                                     if (updatedIsPanelExpanded) {
                                         changeIsPanelExpanded(false)
                                         resetTypeFigure()
@@ -296,7 +293,6 @@ fun FiguresButtonPanel(
                                         changeIsPanelExpanded(true)
                                         changeTypeFigure(button.type)
                                     }
-                                    println(updatedIsPanelExpanded)
                                 }
                             )
                         } else Modifier
