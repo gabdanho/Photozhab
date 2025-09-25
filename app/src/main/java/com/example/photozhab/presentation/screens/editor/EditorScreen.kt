@@ -1,5 +1,7 @@
-package com.example.photozhab.ui.screens
+package com.example.photozhab.presentation.screens.editor
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -16,8 +18,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -37,25 +39,24 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.photozhab.R
-import com.example.photozhab.model.Brush
-import com.example.photozhab.model.ButtonPanelSettings
-import com.example.photozhab.model.Circle
-import com.example.photozhab.model.Figure
-import com.example.photozhab.model.Line
-import com.example.photozhab.model.PathData
-import com.example.photozhab.model.Polygon
-import com.example.photozhab.model.Square
-import com.example.photozhab.model.Triangle
-import com.example.photozhab.model.TypeFigureButton
-import com.example.photozhab.ui.PhotozhabViewModel
-import com.example.photozhab.utils.ColorPicker
-import com.example.photozhab.utils.VerticesPicker
-import com.example.photozhab.utils.WidthPicker
+import com.example.photozhab.presentation.components.ColorPicker
+import com.example.photozhab.presentation.components.VerticesPicker
+import com.example.photozhab.presentation.components.WidthPicker
+import com.example.photozhab.presentation.model.ButtonPanelSettings
+import com.example.photozhab.presentation.model.PathData
+import com.example.photozhab.presentation.model.figures.Brush
+import com.example.photozhab.presentation.model.figures.Circle
+import com.example.photozhab.presentation.model.figures.Figure
+import com.example.photozhab.presentation.model.figures.Line
+import com.example.photozhab.presentation.model.figures.Polygon
+import com.example.photozhab.presentation.model.figures.Square
+import com.example.photozhab.presentation.model.figures.Triangle
+import com.example.photozhab.presentation.model.figures.TypeFigureButton
 
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun EditorScreen(viewModel: PhotozhabViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
@@ -64,13 +65,66 @@ fun EditorScreen(viewModel: PhotozhabViewModel = viewModel()) {
     var isPanelExpanded by remember { mutableStateOf(false) }
     var typeFigure by remember { mutableStateOf<TypeFigureButton?>(null) }
     val buttons = listOf(
-        ButtonPanelSettings(TypeFigureButton.BRUSH, R.drawable.brush) { isBrushChosen = !isBrushChosen },
-        ButtonPanelSettings(TypeFigureButton.CIRCLE, R.drawable.circle) { viewModel.addFigure(Circle(uiState.circleColor)) },
-        ButtonPanelSettings(TypeFigureButton.SQUARE, R.drawable.square) { viewModel.addFigure(Square(uiState.squareColor)) },
-        ButtonPanelSettings(TypeFigureButton.TRIANGLE, R.drawable.triangle) { viewModel.addFigure(Triangle(uiState.triangleColor)) },
-        ButtonPanelSettings(TypeFigureButton.POLYGON, R.drawable.polygon) { viewModel.addFigure(Polygon(uiState.polygonColor, uiState.polygonVertices)) },
-        ButtonPanelSettings(TypeFigureButton.LINE, R.drawable.line) { viewModel.addFigure(Line(uiState.lineColor, uiState.lineWidth)) },
-        ButtonPanelSettings(TypeFigureButton.BACKGROUND, R.drawable.background) {  }
+        ButtonPanelSettings(
+            icon = R.drawable.brush,
+            type = TypeFigureButton.BRUSH
+        ) {
+            isBrushChosen = !isBrushChosen
+        },
+        ButtonPanelSettings(
+            icon = R.drawable.circle,
+            type = TypeFigureButton.CIRCLE
+        ) {
+            viewModel.addFigure(
+                Circle(
+                    uiState.circleColor
+                )
+            )
+        },
+        ButtonPanelSettings(
+            icon = R.drawable.square,
+            type = TypeFigureButton.SQUARE
+        ) {
+            viewModel.addFigure(
+                Square(
+                    uiState.squareColor
+                )
+            )
+        },
+        ButtonPanelSettings(
+            icon = R.drawable.triangle,
+            type = TypeFigureButton.TRIANGLE
+        ) {
+            viewModel.addFigure(
+                Triangle(uiState.triangleColor)
+            )
+        },
+        ButtonPanelSettings(
+            icon = R.drawable.polygon,
+            type = TypeFigureButton.POLYGON
+        ) {
+            viewModel.addFigure(
+                Polygon(
+                    uiState.polygonColor,
+                    uiState.polygonVertices
+                )
+            )
+        },
+        ButtonPanelSettings(
+            icon = R.drawable.line,
+            type = TypeFigureButton.LINE
+        ) {
+            viewModel.addFigure(
+                Line(
+                    uiState.lineColor,
+                    uiState.lineWidth
+                )
+            )
+        },
+        ButtonPanelSettings(
+            icon = R.drawable.background,
+            type = TypeFigureButton.BACKGROUND
+        ) { }
     )
 
     Column {
@@ -88,8 +142,8 @@ fun EditorScreen(viewModel: PhotozhabViewModel = viewModel()) {
             if (isBrushChosen) {
                 // ОбНУЛЛяем, чтобы скрыть панель настроек фигуры
                 DrawingCanvas(
-                    addFigure = viewModel::addFigure, 
-                    brushColor = uiState.brushColor, 
+                    addFigure = viewModel::addFigure,
+                    brushColor = uiState.brushColor,
                     brushWidth = uiState.brushWidth,
                     resetTypeFigure = { typeFigure = null },
                     changeIsPanelExpanded = { isPanelExpanded = it }
@@ -138,13 +192,14 @@ fun EditorScreen(viewModel: PhotozhabViewModel = viewModel()) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun DrawingCanvas(
     addFigure: (Figure) -> Unit,
     brushColor: Color,
     brushWidth: Float,
     resetTypeFigure: () -> Unit,
-    changeIsPanelExpanded: (Boolean) -> Unit
+    changeIsPanelExpanded: (Boolean) -> Unit,
 ) {
     val pathData = remember { mutableStateOf(PathData()) }
     var tempPath by remember { mutableStateOf(Path()) }
@@ -171,7 +226,7 @@ fun DrawingCanvas(
                             change.position.y
                         )
 
-                        if (pathList.size > 0) {
+                        if (pathList.isNotEmpty()) {
                             pathList.removeLast()
                         }
 
@@ -185,7 +240,13 @@ fun DrawingCanvas(
                         tempPath = Path()
                     },
                     onDragEnd = {
-                        addFigure(Brush(currentBrushColor, currentBrushWidth, tempPath))
+                        addFigure(
+                            Brush(
+                                currentBrushColor,
+                                currentBrushWidth,
+                                tempPath
+                            )
+                        )
                         pathList.clear()
                     }
                 )
@@ -211,10 +272,14 @@ fun ToolPanel(
     onDeleteAllClick: () -> Unit,
     changeTypeFigure: (TypeFigureButton?) -> Unit,
     resetTypeFigure: () -> Unit,
-    changeIsPanelExpanded: (Boolean) -> Unit
+    changeIsPanelExpanded: (Boolean) -> Unit,
 ) {
     Column {
-        StateFiguresButtonPanel(onPrevStateClick, onForwardStateClick, onDeleteAllClick)
+        StateFiguresButtonPanel(
+            onPrevStateClick = onPrevStateClick,
+            onForwardStateClick = onForwardStateClick,
+            onDeleteAllClick = onDeleteAllClick
+        )
         FiguresButtonPanel(
             buttons = buttons,
             isBrushChosen = isBrushChosen,
@@ -230,7 +295,7 @@ fun ToolPanel(
 fun StateFiguresButtonPanel(
     onPrevStateClick: () -> Unit,
     onForwardStateClick: () -> Unit,
-    onDeleteAllClick: () -> Unit
+    onDeleteAllClick: () -> Unit,
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -238,10 +303,16 @@ fun StateFiguresButtonPanel(
     ) {
         Row {
             IconButton(onClick = onPrevStateClick) {
-                Icon(Icons.Filled.ArrowBack, "Previous state")
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Previous state"
+                )
             }
             IconButton(onClick = onForwardStateClick) {
-                Icon(Icons.Filled.ArrowForward, "Forward state")
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = "Forward state"
+                )
             }
         }
         IconButton(onClick = onDeleteAllClick) { // TODO("Добавить диалог, чтобы пользователь дал подтверждение")
@@ -261,7 +332,7 @@ fun FiguresButtonPanel(
     isPanelExpanded: Boolean,
     changeTypeFigure: (TypeFigureButton) -> Unit,
     resetTypeFigure: () -> Unit,
-    changeIsPanelExpanded: (Boolean) -> Unit
+    changeIsPanelExpanded: (Boolean) -> Unit,
 ) {
     val updatedIsPanelExpanded by rememberUpdatedState(isPanelExpanded)
 
@@ -288,8 +359,7 @@ fun FiguresButtonPanel(
                                     if (updatedIsPanelExpanded) {
                                         changeIsPanelExpanded(false)
                                         resetTypeFigure()
-                                    }
-                                    else {
+                                    } else {
                                         changeIsPanelExpanded(true)
                                         changeTypeFigure(button.type)
                                     }
@@ -332,61 +402,104 @@ fun FigureSettingsPanel(
     backgroundColor: Color,
     brushWidth: Float,
     lineWidth: Float,
-    polygonVertices: Int
+    polygonVertices: Int,
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.LightGray, shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
-            .pointerInput(Unit) {  } // оставляем пустым, чтобы перехватить жесты, дабы не рисовать сквозь Box
+            .background(
+                Color.LightGray,
+                shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+            )
+            .pointerInput(Unit) { } // оставляем пустым, чтобы перехватить жесты, дабы не рисовать сквозь Box
     ) {
-        when(typeFigure) {
+        when (typeFigure) {
             TypeFigureButton.BRUSH -> {
                 Column {
-                    ColorPicker(brushColor, changeBrushColor)
-                    WidthPicker(brushWidth, changeBrushWidth)
+                    ColorPicker(
+                        currentColor = brushColor,
+                        changeColor = changeBrushColor,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    WidthPicker(
+                        currentWidth = brushWidth,
+                        changeWidth = changeBrushWidth,
+                        modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
+                    )
                 }
             }
+
             TypeFigureButton.CIRCLE -> {
                 Column {
-                    ColorPicker(circleColor, changeCircleColor)
+                    ColorPicker(
+                        currentColor = circleColor,
+                        changeColor = changeCircleColor,
+                        modifier = Modifier.padding(8.dp)
+                    )
                 }
             }
+
             TypeFigureButton.SQUARE -> {
                 Column {
-                    ColorPicker(squareColor, changeSquareColor)
+                    ColorPicker(
+                        currentColor = squareColor,
+                        changeColor = changeSquareColor,
+                        modifier = Modifier.padding(8.dp)
+                    )
                 }
             }
+
             TypeFigureButton.TRIANGLE -> {
                 Column {
-                    ColorPicker(triangleColor, changeTriangleColor)
+                    ColorPicker(
+                        currentColor = triangleColor,
+                        changeColor = changeTriangleColor,
+                        modifier = Modifier.padding(8.dp)
+                    )
                 }
             }
+
             TypeFigureButton.POLYGON -> {
                 Column {
-                    ColorPicker(polygonColor, changePolygonColor)
-                    VerticesPicker(polygonVertices, changePolygonVertices)
+                    ColorPicker(
+                        currentColor = polygonColor,
+                        changeColor = changePolygonColor,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    VerticesPicker(
+                        currentVertices = polygonVertices,
+                        changeVertices = changePolygonVertices,
+                        modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
+                    )
                 }
             }
+
             TypeFigureButton.LINE -> {
                 Column {
-                    ColorPicker(lineColor, changeLineColor)
-                    WidthPicker(lineWidth, changeLineWidth)
+                    ColorPicker(
+                        currentColor = lineColor,
+                        changeColor = changeLineColor,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    WidthPicker(
+                        currentWidth = lineWidth,
+                        changeWidth = changeLineWidth,
+                        modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
+                    )
                 }
             }
+
             TypeFigureButton.BACKGROUND -> {
                 Column {
-                    ColorPicker(backgroundColor, changeBackgroundColor)
+                    ColorPicker(
+                        currentColor = backgroundColor,
+                        changeColor = changeBackgroundColor,
+                        modifier = Modifier.padding(8.dp)
+                    )
                 }
             }
 
             null -> Unit
         }
     }
-}
-
-@Preview
-@Composable
-fun EditorScreenPreview() {
-    EditorScreen()
 }

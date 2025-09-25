@@ -1,4 +1,4 @@
-package com.example.photozhab.ui.theme
+package com.example.photozhab.presentation.ui.theme
 
 import android.app.Activity
 import android.os.Build

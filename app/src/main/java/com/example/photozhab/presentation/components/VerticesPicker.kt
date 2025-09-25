@@ -1,16 +1,11 @@
-package com.example.photozhab.utils
+package com.example.photozhab.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,34 +19,39 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun WidthPicker(currentWidth: Float, changeWidth: (Float) -> Unit) {
-    var width by remember { mutableStateOf(currentWidth / 100) }
-    var resultWidth by remember { mutableStateOf(currentWidth) }
+fun VerticesPicker(
+    currentVertices: Int,
+    changeVertices: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var vertices by remember { mutableStateOf(currentVertices.toFloat() / 100) }
+    var verticesResult by remember { mutableStateOf(currentVertices) }
 
-    LaunchedEffect(resultWidth) {
-        changeWidth(resultWidth)
+    LaunchedEffect(verticesResult) {
+        changeVertices(verticesResult)
     }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
+        modifier = modifier
     ) {
-        Text("Ширина линии")
+        Text("Углы")
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Slider(
-                value = width,
+                value = vertices,
                 onValueChange = {
-                    width = it
-                    resultWidth = (width * 100)
+                    vertices = it
+                    verticesResult = (vertices * 100).toInt()
                 },
                 modifier = Modifier.weight(1f),
-                steps = 100
+                steps = 47,
+                valueRange = 0.03f..0.5f
             )
             Text(
-                text = resultWidth.toInt().toString(),
+                text = verticesResult.toString(),
                 modifier = Modifier.width(25.dp),
                 textAlign = TextAlign.End,
                 style = MaterialTheme.typography.bodySmall

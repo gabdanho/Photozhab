@@ -1,9 +1,8 @@
-package com.example.photozhab.utils
+package com.example.photozhab.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -20,35 +19,38 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun VerticesPicker(currentVertices: Int, changeVertices: (Int) -> Unit) {
-    var vertices by remember { mutableStateOf(currentVertices.toFloat() / 100) }
-    var verticesResult by remember { mutableStateOf(currentVertices) }
+fun WidthPicker(
+    currentWidth: Float,
+    changeWidth: (Float) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var width by remember { mutableStateOf(currentWidth / 100) }
+    var resultWidth by remember { mutableStateOf(currentWidth) }
 
-    LaunchedEffect(verticesResult) {
-        changeVertices(verticesResult)
+    LaunchedEffect(resultWidth) {
+        changeWidth(resultWidth)
     }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
+        modifier = modifier
     ) {
-        Text("Углы")
+        Text("Ширина линии")
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Slider(
-                value = vertices,
+                value = width,
                 onValueChange = {
-                    vertices = it
-                    verticesResult = (vertices * 100).toInt()
+                    width = it
+                    resultWidth = (width * 100)
                 },
                 modifier = Modifier.weight(1f),
-                steps = 47,
-                valueRange = 0.03f..0.5f
+                steps = 100
             )
             Text(
-                text = verticesResult.toString(),
+                text = resultWidth.toInt().toString(),
                 modifier = Modifier.width(25.dp),
                 textAlign = TextAlign.End,
                 style = MaterialTheme.typography.bodySmall

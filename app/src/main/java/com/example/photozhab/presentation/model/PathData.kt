@@ -1,4 +1,4 @@
-package com.example.photozhab.model
+package com.example.photozhab.presentation.model
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -6,5 +6,5 @@ import androidx.compose.ui.graphics.Path
 data class PathData(
     val path: Path = Path(),
     val color: Color = Color.Blue,
-    val width: Float = 5f
+    val width: Float = 5f,
 )

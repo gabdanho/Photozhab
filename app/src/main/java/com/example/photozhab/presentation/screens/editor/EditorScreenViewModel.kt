@@ -1,16 +1,12 @@
-package com.example.photozhab.ui
+package com.example.photozhab.presentation.screens.editor
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
-import com.example.photozhab.model.Brush
-import com.example.photozhab.model.Figure
+import com.example.photozhab.presentation.model.figures.Figure
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,6 +37,7 @@ class PhotozhabViewModel : ViewModel() {
         deletedFigures.clear()
     }
 
+    @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
     fun prevState() {
         if (_uiState.value.figures.isNotEmpty()) {
             val prevFigure = _uiState.value.figures.removeLast()
@@ -48,6 +45,7 @@ class PhotozhabViewModel : ViewModel() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
     fun forwardState() {
         if (deletedFigures.isNotEmpty()) {
             _uiState.value.figures.add(deletedFigures.removeLast())
