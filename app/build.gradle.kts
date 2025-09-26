@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -52,6 +53,8 @@ android {
 
 dependencies {
 
+    ksp("androidx.room:room-compiler:2.8.1")
+    implementation("androidx.room:room-ktx:2.8.1")
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.4")
     implementation("androidx.activity:activity-compose:1.11.0")
