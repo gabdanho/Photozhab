@@ -7,7 +7,9 @@ import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import com.example.photozhab.presentation.screens.editor.EditorScreen
 import com.example.photozhab.presentation.ui.theme.PhotozhabTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
     override fun onCreate(savedInstanceState: Bundle?) {

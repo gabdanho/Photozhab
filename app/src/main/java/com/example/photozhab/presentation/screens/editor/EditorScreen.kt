@@ -39,7 +39,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.photozhab.R
 import com.example.photozhab.presentation.components.ColorPicker
 import com.example.photozhab.presentation.components.DialogToDeleteData
@@ -59,7 +59,7 @@ import com.example.photozhab.presentation.model.PointF
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
-fun EditorScreen(viewModel: EditorScreenViewModel = viewModel()) {
+fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenViewModel>()) {
     val uiState by viewModel.uiState.collectAsState()
     val buttons = listOf(
         EditorButtonSettings(

@@ -4,14 +4,20 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import com.example.photozhab.domain.interfaces.repository.local.CanvasRepository
 import com.example.photozhab.presentation.model.EditorButton
 import com.example.photozhab.presentation.model.figures.Figure
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
-class EditorScreenViewModel : ViewModel() {
+@HiltViewModel
+class EditorScreenViewModel @Inject constructor(
+    private val canvasRepository: CanvasRepository,
+): ViewModel() {
 
     private val _uiState = MutableStateFlow(EditorScreenUiState())
     val uiState: StateFlow<EditorScreenUiState> = _uiState.asStateFlow()
