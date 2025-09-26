@@ -1,6 +1,6 @@
 package com.example.photozhab.presentation.model.figures
 
-enum class TypeFigureButton {
+enum class EditorButton {
     CIRCLE,
     SQUARE,
     TRIANGLE,

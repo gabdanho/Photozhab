@@ -2,33 +2,19 @@ package com.example.photozhab.presentation.screens.editor
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import com.example.photozhab.presentation.model.figures.EditorButton
 import com.example.photozhab.presentation.model.figures.Figure
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-data class PhotozhabUiState(
-    val figures: SnapshotStateList<Figure> = mutableStateListOf(),
-    var circleColor: Color = Color.Green,
-    val squareColor: Color = Color.Blue,
-    val brushColor: Color = Color.Red,
-    val brushWidth: Float = 5f,
-    val triangleColor: Color = Color.Yellow,
-    val polygonColor: Color = Color.Magenta,
-    val backgroundColor: Color = Color.Black,
-    val polygonVertices: Int = 5,
-    val lineColor: Color = Color.Green,
-    val lineWidth: Float = 5f
-)
+class EditorScreenViewModel : ViewModel() {
 
-class PhotozhabViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow(PhotozhabUiState())
-    val uiState: StateFlow<PhotozhabUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(EditorScreenUiState())
+    val uiState: StateFlow<EditorScreenUiState> = _uiState.asStateFlow()
 
     private val deletedFigures = mutableListOf<Figure>()
 
@@ -56,6 +42,11 @@ class PhotozhabViewModel : ViewModel() {
         deletedFigures.clear()
         _uiState.value.figures.clear()
     }
+
+    fun changeIsBrushChosen(value: Boolean) = _uiState.update { it.copy(isBrushChosen = value) }
+    fun changeIsPanelExpanded(value: Boolean) = _uiState.update { it.copy(isPanelExpanded = value) }
+    fun changeCurrentEditorButton(editorButton: EditorButton?) =
+        _uiState.update { it.copy(currentEditorButton = editorButton) }
 
     // SETTING FIGURE PARAMS
     ///////////////////////////////////////////////////////////////////////////

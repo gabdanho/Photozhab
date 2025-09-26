@@ -1,11 +1,11 @@
 package com.example.photozhab.presentation.model
 
 import androidx.annotation.DrawableRes
-import com.example.photozhab.presentation.model.figures.TypeFigureButton
+import com.example.photozhab.presentation.model.figures.EditorButton
 
-data class ButtonPanelSettings(
+data class EditorButtonSettings(
     @DrawableRes val icon: Int,
-    val type: TypeFigureButton,
+    val type: EditorButton,
     val isEnabled: Boolean = true,
     val onClick: () -> Unit,
 )
