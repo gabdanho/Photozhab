@@ -1,6 +1,7 @@
 package com.example.photozhab.presentation.screens.editor
 
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -33,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
@@ -43,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.photozhab.R
 import com.example.photozhab.presentation.components.ColorPicker
+import com.example.photozhab.presentation.components.DialogToDeleteData
 import com.example.photozhab.presentation.components.VerticesPicker
 import com.example.photozhab.presentation.components.WidthPicker
 import com.example.photozhab.presentation.model.EditorButtonSettings
@@ -60,45 +63,102 @@ import com.example.photozhab.presentation.model.figures.EditorButton
 @Composable
 fun EditorScreen(viewModel: EditorScreenViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
-    val buttons = provideEditorButtons(viewModel, uiState)
+    val buttons = listOf(
+        EditorButtonSettings(
+            icon = R.drawable.brush,
+            type = EditorButton.BRUSH
+        ) {
+            viewModel.changeIsBrushChosen(value = !uiState.isBrushChosen)
+        },
+        EditorButtonSettings(
+            icon = R.drawable.circle,
+            type = EditorButton.CIRCLE
+        ) {
+            viewModel.addFigure(figure = Circle(color = uiState.circleColor))
+        },
+        EditorButtonSettings(
+            icon = R.drawable.square,
+            type = EditorButton.SQUARE
+        ) {
+            viewModel.addFigure(figure = Square(color = uiState.squareColor))
+        },
+        EditorButtonSettings(
+            icon = R.drawable.triangle,
+            type = EditorButton.TRIANGLE
+        ) {
+            viewModel.addFigure(figure = Triangle(color = uiState.triangleColor))
+        },
+        EditorButtonSettings(
+            icon = R.drawable.polygon,
+            type = EditorButton.POLYGON
+        ) {
+            viewModel.addFigure(
+                figure = Polygon(
+                    color = uiState.polygonColor,
+                    vertices = uiState.polygonVertices
+                )
+            )
+        },
+        EditorButtonSettings(
+            icon = R.drawable.line,
+            type = EditorButton.LINE
+        ) {
+            viewModel.addFigure(
+                figure = Line(
+                    color = uiState.lineColor,
+                    lineWidth = uiState.lineWidth
+                )
+            )
+        },
+        EditorButtonSettings(
+            icon = R.drawable.background,
+            type = EditorButton.BACKGROUND
+        ) { }
+    )
+
+    BackHandler(enabled = uiState.isPanelExpanded) {
+        viewModel.changeIsPanelExpanded(value = false)
+    }
 
     Column {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .background(uiState.backgroundColor)
                 .weight(1f)
                 .clipToBounds()
+                .drawBehind {
+                    drawRect(color = uiState.backgroundColor)
+                }
         ) {
             uiState.figures.forEach { figure ->
                 figure.draw()
             }
             if (uiState.isBrushChosen) {
-                // ОбНУЛЛяем, чтобы скрыть панель настроек фигуры
                 DrawingCanvas(
                     brushColor = uiState.brushColor,
                     brushWidth = uiState.brushWidth,
-                    resetCurrentEditorButton = { viewModel.changeCurrentEditorButton(editorButton = null) },
-                    changeIsPanelExpanded = { viewModel.changeIsPanelExpanded(value = it) },
                     onPathDrawn = { viewModel.addFigure(figure = it) },
+                    onDrag = {
+                        viewModel.changeIsPanelExpanded(value = false)
+                    }
                 )
             }
 
-            if (uiState.currentEditorButton != null) {
+            if (uiState.isPanelExpanded) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
                     FigureSettingsPanel(
                         pressedCurrentEditorButton = uiState.currentEditorButton,
-                        changePolygonVertices = viewModel::changePolygonVertices,
-                        changeTriangleColor = viewModel::changeTriangleColor,
-                        changeCircleColor = viewModel::changeCircleColor,
-                        changeSquareColor = viewModel::changeSquareColor,
-                        changePolygonColor = viewModel::changePolygonColor,
-                        changeLineColor = viewModel::changeLineColor,
-                        changeLineWidth = viewModel::changeLineWidth,
-                        changeBrushWidth = viewModel::changeBrushWidth,
-                        changeBrushColor = viewModel::changeBrushColor,
-                        changeBackgroundColor = viewModel::changeBackgroundColor,
+                        changePolygonVertices = { viewModel.changePolygonVertices(vertices = it) },
+                        changeTriangleColor = { viewModel.changeTriangleColor(color = it) },
+                        changeCircleColor = { viewModel.changeCircleColor(color = it) },
+                        changeSquareColor = { viewModel.changeSquareColor(color = it) },
+                        changePolygonColor = { viewModel.changePolygonColor(color = it) },
+                        changeLineColor = { viewModel.changeLineColor(color = it) },
+                        changeLineWidth = { viewModel.changeLineWidth(width = it) },
+                        changeBrushWidth = { viewModel.changeBrushWidth(width = it) },
+                        changeBrushColor = { viewModel.changeBrushColor(color = it) },
+                        changeBackgroundColor = { viewModel.changeBackgroundColor(color = it) },
                         brushColor = uiState.brushColor,
                         circleColor = uiState.circleColor,
                         squareColor = uiState.squareColor,
@@ -116,13 +176,21 @@ fun EditorScreen(viewModel: EditorScreenViewModel = viewModel()) {
         ToolPanel(
             buttons = buttons,
             isBrushChosen = uiState.isBrushChosen,
-            isPanelExpanded = uiState.isPanelExpanded,
-            onPrevStateClick = viewModel::prevState,
-            onForwardStateClick = viewModel::forwardState,
-            onDeleteAllClick = viewModel::deleteAllFigures,
+            onPrevStateClick = { viewModel.prevState() },
+            onForwardStateClick = { viewModel.forwardState() },
+            onDeleteAllClick = { viewModel.changeIsShowWarningDialog(value = true) },
             changeCurrentEditorButton = { viewModel.changeCurrentEditorButton(editorButton = it) },
-            resetCurrentEditorButton = { viewModel.changeCurrentEditorButton(editorButton = null) },
             changeIsPanelExpanded = { viewModel.changeIsPanelExpanded(value = it) }
+        )
+    }
+
+    if (uiState.isShowWarningDialog) {
+        DialogToDeleteData(
+            onDismiss = { viewModel.changeIsShowWarningDialog(value = false) },
+            onAccess = {
+                viewModel.deleteAllFigures()
+                viewModel.changeIsShowWarningDialog(value = false)
+            }
         )
     }
 }
@@ -132,9 +200,8 @@ fun EditorScreen(viewModel: EditorScreenViewModel = viewModel()) {
 private fun DrawingCanvas(
     brushColor: Color,
     brushWidth: Float,
-    resetCurrentEditorButton: () -> Unit,
-    changeIsPanelExpanded: (Boolean) -> Unit,
     onPathDrawn: (Figure) -> Unit,
+    onDrag: () -> Unit = { },
 ) {
     var tempPath by remember { mutableStateOf(Path()) }
     val pathList = remember { mutableStateListOf(PathData()) }
@@ -148,9 +215,7 @@ private fun DrawingCanvas(
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDrag = { change, dragAmount ->
-                        // ОбНУЛЛяем, чтобы скрыть панель настроек фигуры
-                        resetCurrentEditorButton()
-                        changeIsPanelExpanded(false)
+                        onDrag()
 
                         tempPath.moveTo(
                             x = change.position.x - dragAmount.x,
@@ -193,12 +258,10 @@ private fun DrawingCanvas(
 private fun ToolPanel(
     buttons: List<EditorButtonSettings>,
     isBrushChosen: Boolean,
-    isPanelExpanded: Boolean,
     onPrevStateClick: () -> Unit,
     onForwardStateClick: () -> Unit,
     onDeleteAllClick: () -> Unit,
     changeCurrentEditorButton: (EditorButton?) -> Unit,
-    resetCurrentEditorButton: () -> Unit,
     changeIsPanelExpanded: (Boolean) -> Unit,
 ) {
     Column {
@@ -211,18 +274,12 @@ private fun ToolPanel(
             buttons = buttons,
             isBrushChosen = isBrushChosen,
             onClick = {
-                resetCurrentEditorButton()
-                changeIsPanelExpanded(false)
+                changeCurrentEditorButton(null)
                 it.onClick()
             },
             onLongPress = {
-                if (isPanelExpanded) {
-                    resetCurrentEditorButton()
-                    changeIsPanelExpanded(false)
-                } else {
-                    changeIsPanelExpanded(true)
-                    changeCurrentEditorButton(it.type)
-                }
+                changeCurrentEditorButton(it.type)
+                changeIsPanelExpanded(true)
             }
         )
     }
@@ -280,14 +337,12 @@ private fun ButtonsPanel(
             Box(
                 modifier = Modifier
                     .background(if (isBrushChosen && button.type == EditorButton.BRUSH) Color.LightGray else Color.Unspecified)
-                    .then(
-                        if (isEnabled) Modifier.pointerInput(Unit) {
+                    .pointerInput(Unit) {
                             detectTapGestures(
-                                onTap = { onClick(button) },
-                                onLongPress = { onLongPress(button) }
+                                onTap = { if (isEnabled) onClick(button) },
+                                onLongPress = { if (isEnabled) onLongPress(button) }
                             )
-                        } else Modifier
-                    )
+                        }
                     .padding(16.dp)
             ) {
                 Icon(
@@ -325,79 +380,6 @@ private fun FigureSettingsPanel(
     changeBrushWidth: (Float) -> Unit,
     changeBackgroundColor: (Color) -> Unit,
 ) {
-    val panels = mapOf<EditorButton, @Composable () -> Unit>(
-        EditorButton.BRUSH to {
-            ColorPicker(
-                currentColor = brushColor,
-                changeColor = changeBrushColor,
-                modifier = Modifier.padding(8.dp)
-            )
-            WidthPicker(
-                currentWidth = brushWidth,
-                changeWidth = changeBrushWidth,
-                modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
-            )
-        },
-
-        EditorButton.CIRCLE to {
-            ColorPicker(
-                currentColor = circleColor,
-                changeColor = changeCircleColor,
-                modifier = Modifier.padding(8.dp)
-            )
-        },
-
-        EditorButton.SQUARE to {
-            ColorPicker(
-                currentColor = squareColor,
-                changeColor = changeSquareColor,
-                modifier = Modifier.padding(8.dp)
-            )
-        },
-
-        EditorButton.TRIANGLE to {
-            ColorPicker(
-                currentColor = triangleColor,
-                changeColor = changeTriangleColor,
-                modifier = Modifier.padding(8.dp)
-            )
-        },
-
-        EditorButton.POLYGON to {
-            ColorPicker(
-                currentColor = polygonColor,
-                changeColor = changePolygonColor,
-                modifier = Modifier.padding(8.dp)
-            )
-            VerticesPicker(
-                currentVertices = polygonVertices,
-                changeVertices = changePolygonVertices,
-                modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
-            )
-        },
-
-        EditorButton.LINE to {
-            ColorPicker(
-                currentColor = lineColor,
-                changeColor = changeLineColor,
-                modifier = Modifier.padding(8.dp)
-            )
-            WidthPicker(
-                currentWidth = lineWidth,
-                changeWidth = changeLineWidth,
-                modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
-            )
-        },
-
-        EditorButton.BACKGROUND to {
-            ColorPicker(
-                currentColor = backgroundColor,
-                changeColor = changeBackgroundColor,
-                modifier = Modifier.padding(8.dp)
-            )
-        }
-    )
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -408,67 +390,94 @@ private fun FigureSettingsPanel(
             .pointerInput(Unit) { } // оставляем пустым, чтобы перехватить жесты, дабы не рисовать сквозь Box
     ) {
         Column {
-            pressedCurrentEditorButton?.let { type ->
-                panels[type]?.invoke()
+            when (pressedCurrentEditorButton) {
+                EditorButton.BRUSH -> {
+                    Column {
+                        ColorPicker(
+                            currentColor = brushColor,
+                            changeColor = changeBrushColor,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                        WidthPicker(
+                            currentWidth = brushWidth,
+                            changeWidth = changeBrushWidth,
+                            modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
+                        )
+                    }
+                }
+
+                EditorButton.CIRCLE -> {
+                    Column {
+                        ColorPicker(
+                            currentColor = circleColor,
+                            changeColor = changeCircleColor,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                }
+
+                EditorButton.SQUARE -> {
+                    Column {
+                        ColorPicker(
+                            currentColor = squareColor,
+                            changeColor = changeSquareColor,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                }
+
+                EditorButton.TRIANGLE -> {
+                    Column {
+                        ColorPicker(
+                            currentColor = triangleColor,
+                            changeColor = changeTriangleColor,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                }
+
+                EditorButton.POLYGON -> {
+                    Column {
+                        ColorPicker(
+                            currentColor = polygonColor,
+                            changeColor = changePolygonColor,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                        VerticesPicker(
+                            currentVertices = polygonVertices,
+                            changeVertices = changePolygonVertices,
+                            modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
+                        )
+                    }
+                }
+
+                EditorButton.LINE -> {
+                    Column {
+                        ColorPicker(
+                            currentColor = lineColor,
+                            changeColor = changeLineColor,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                        WidthPicker(
+                            currentWidth = lineWidth,
+                            changeWidth = changeLineWidth,
+                            modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
+                        )
+                    }
+                }
+
+                EditorButton.BACKGROUND -> {
+                    Column {
+                        ColorPicker(
+                            currentColor = backgroundColor,
+                            changeColor = changeBackgroundColor,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                }
+
+                null -> Unit
             }
         }
     }
-}
-
-private fun provideEditorButtons(
-    viewModel: EditorScreenViewModel,
-    uiState: EditorScreenUiState,
-): List<EditorButtonSettings> {
-    return listOf(
-        EditorButtonSettings(
-            icon = R.drawable.brush,
-            type = EditorButton.BRUSH
-        ) {
-            viewModel.changeIsBrushChosen(value = !uiState.isBrushChosen)
-        },
-        EditorButtonSettings(
-            icon = R.drawable.circle,
-            type = EditorButton.CIRCLE
-        ) {
-            viewModel.addFigure(figure = Circle(color = uiState.circleColor))
-        },
-        EditorButtonSettings(
-            icon = R.drawable.square,
-            type = EditorButton.SQUARE
-        ) {
-            viewModel.addFigure(figure = Square(color = uiState.squareColor))
-        },
-        EditorButtonSettings(
-            icon = R.drawable.triangle,
-            type = EditorButton.TRIANGLE
-        ) {
-            viewModel.addFigure(figure = Triangle(color = uiState.triangleColor))
-        },
-        EditorButtonSettings(
-            icon = R.drawable.polygon,
-            type = EditorButton.POLYGON
-        ) {
-            viewModel.addFigure(
-                figure = Polygon(
-                    color = uiState.polygonColor,
-                    vertices = uiState.polygonVertices
-                )
-            )
-        },
-        EditorButtonSettings(
-            icon = R.drawable.line,
-            type = EditorButton.LINE
-        ) {
-            viewModel.addFigure(
-                figure = Line(
-                    color = uiState.lineColor,
-                    lineWidth = uiState.lineWidth
-                )
-            )
-        },
-        EditorButtonSettings(
-            icon = R.drawable.background,
-            type = EditorButton.BACKGROUND
-        ) { }
-    )
 }

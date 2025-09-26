@@ -23,4 +23,5 @@ data class EditorScreenUiState(
     val isBrushChosen: Boolean = false,
     val isPanelExpanded: Boolean = false,
     val currentEditorButton: EditorButton? = null,
+    val isShowWarningDialog: Boolean = false,
 )

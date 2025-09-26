@@ -39,10 +39,11 @@ class EditorScreenViewModel : ViewModel() {
     }
 
     fun deleteAllFigures() {
-        deletedFigures.clear()
         _uiState.value.figures.clear()
+        deletedFigures.clear()
     }
 
+    fun changeIsShowWarningDialog(value: Boolean) = _uiState.update { it.copy(isShowWarningDialog = value) }
     fun changeIsBrushChosen(value: Boolean) = _uiState.update { it.copy(isBrushChosen = value) }
     fun changeIsPanelExpanded(value: Boolean) = _uiState.update { it.copy(isPanelExpanded = value) }
     fun changeCurrentEditorButton(editorButton: EditorButton?) =
