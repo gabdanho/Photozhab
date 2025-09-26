@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -53,6 +54,9 @@ android {
 
 dependencies {
 
+    implementation("com.google.dagger:hilt-android:2.53")
+    implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
+    ksp("com.google.dagger:hilt-compiler:2.53")
     ksp("androidx.room:room-compiler:2.8.1")
     implementation("androidx.room:room-ktx:2.8.1")
     implementation("androidx.core:core-ktx:1.17.0")
