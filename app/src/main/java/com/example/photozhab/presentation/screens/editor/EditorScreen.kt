@@ -27,16 +27,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
@@ -57,7 +54,8 @@ import com.example.photozhab.presentation.model.figures.Line
 import com.example.photozhab.presentation.model.figures.Polygon
 import com.example.photozhab.presentation.model.figures.Square
 import com.example.photozhab.presentation.model.figures.Triangle
-import com.example.photozhab.presentation.model.figures.EditorButton
+import com.example.photozhab.presentation.model.EditorButton
+import com.example.photozhab.presentation.model.PointF
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
@@ -203,7 +201,7 @@ private fun DrawingCanvas(
     onPathDrawn: (Figure) -> Unit,
     onDrag: () -> Unit = { },
 ) {
-    var tempPath by remember { mutableStateOf(Path()) }
+    var currentPoints = remember { mutableListOf<PointF>() }
     val pathList = remember { mutableStateListOf(PathData()) }
 
     val currentBrushColor by rememberUpdatedState(brushColor)
@@ -216,27 +214,17 @@ private fun DrawingCanvas(
                 detectDragGestures(
                     onDrag = { change, dragAmount ->
                         onDrag()
-
-                        tempPath.moveTo(
-                            x = change.position.x - dragAmount.x,
-                            y = change.position.y - dragAmount.y
-                        )
-                        tempPath.lineTo(
-                            x = change.position.x,
-                            y = change.position.y
-                        )
-
+                        currentPoints.add(PointF(change.position.x, change.position.y))
                         if (pathList.isNotEmpty()) pathList.removeLast()
-
-                        pathList.add(PathData(path = tempPath))
+                        pathList.add(PathData(points = currentPoints))
                     },
-                    onDragStart = { tempPath = Path() },
+                    onDragStart = { currentPoints = mutableListOf() },
                     onDragEnd = {
                         onPathDrawn(
                             Brush(
                                 color = currentBrushColor,
                                 brushWidth = currentBrushWidth,
-                                path = tempPath
+                                pathData = PathData(currentPoints.toList())
                             )
                         )
                         pathList.clear()
@@ -247,7 +235,7 @@ private fun DrawingCanvas(
         pathList.forEach {
             drawPath(
                 color = currentBrushColor,
-                path = it.path,
+                path = it.toPath(),
                 style = Stroke(currentBrushWidth, cap = StrokeCap.Round)
             )
         }

@@ -1,7 +1,7 @@
 package com.example.photozhab.presentation.model
 
 import androidx.annotation.DrawableRes
-import com.example.photozhab.presentation.model.figures.EditorButton
+import com.example.photozhab.presentation.model.EditorButton
 
 data class EditorButtonSettings(
     @DrawableRes val icon: Int,

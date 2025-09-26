@@ -1,4 +1,4 @@
-package com.example.photozhab.presentation.model.figures
+package com.example.photozhab.presentation.model
 
 enum class EditorButton {
     CIRCLE,

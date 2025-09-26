@@ -50,8 +50,8 @@ fun ColorPicker(
         )
         Box(
             modifier = Modifier
-                .padding(horizontal = 10.dp)
                 .fillMaxWidth()
+                .padding(horizontal = 10.dp)
                 .height(40.dp)
                 .background(color, shape = MaterialTheme.shapes.large)
         )

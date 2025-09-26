@@ -3,7 +3,7 @@ package com.example.photozhab.presentation.screens.editor
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
-import com.example.photozhab.presentation.model.figures.EditorButton
+import com.example.photozhab.presentation.model.EditorButton
 import com.example.photozhab.presentation.model.figures.Figure
 
 data class EditorScreenUiState(

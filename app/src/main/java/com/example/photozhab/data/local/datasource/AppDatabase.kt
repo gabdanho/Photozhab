@@ -1,0 +1,30 @@
+package com.example.photozhab.data.local.datasource
+
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import com.example.photozhab.data.local.dao.CanvasDao
+import com.example.photozhab.data.local.entity.Canvas
+
+@Database(entities = [Canvas::class], version = 1)
+abstract class AppDatabase : RoomDatabase() {
+
+    abstract fun canvasDao(): CanvasDao
+
+    companion object {
+        private var INSTANCE: AppDatabase? = null
+
+        fun getInstance(context: Context): AppDatabase {
+            if (INSTANCE == null) {
+                synchronized(AppDatabase::class) {
+                    INSTANCE = Room.databaseBuilder(
+                        context.applicationContext,
+                        AppDatabase::class.java, "app_database"
+                    ).build()
+                }
+            }
+            return INSTANCE!!
+        }
+    }
+}

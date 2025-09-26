@@ -4,7 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
-import com.example.photozhab.presentation.model.figures.EditorButton
+import com.example.photozhab.presentation.model.EditorButton
 import com.example.photozhab.presentation.model.figures.Figure
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
