@@ -223,7 +223,9 @@ private fun DrawingCanvas(
                                 lineToY = change.position.y
                             )
                         )
-                        if (pathList.isNotEmpty()) { pathList.removeLast() }
+                        if (pathList.isNotEmpty()) {
+                            pathList.removeLast()
+                        }
                         pathList.add(PathData(pathPointsList = currentPathPoints))
                     },
                     onDragStart = { currentPathPoints = mutableListOf() },
@@ -328,17 +330,17 @@ private fun ButtonsPanel(
         verticalAlignment = Alignment.CenterVertically
     ) {
         items(buttons) { button ->
-            val isEnabled = if (button.type != EditorButton.BRUSH) !isBrushChosen else true
+            val isEnabled = button.type == EditorButton.BRUSH || !isBrushChosen
 
             Box(
                 modifier = Modifier
                     .background(if (isBrushChosen && button.type == EditorButton.BRUSH) Color.LightGray else Color.Unspecified)
-                    .pointerInput(Unit) {
-                            detectTapGestures(
-                                onTap = { if (isEnabled) onClick(button) },
-                                onLongPress = { if (isEnabled) onLongPress(button) }
-                            )
-                        }
+                    .pointerInput(isEnabled) {
+                        detectTapGestures(
+                            onTap = { if (isEnabled) onClick(button) },
+                            onLongPress = { if (isEnabled) onLongPress(button) }
+                        )
+                    }
                     .padding(16.dp)
             ) {
                 Icon(
