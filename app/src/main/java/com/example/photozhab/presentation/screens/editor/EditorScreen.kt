@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -139,7 +140,8 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
                     onPathDrawn = { viewModel.addFigure(figure = it) },
                     onDrag = {
                         viewModel.changeIsPanelExpanded(value = false)
-                    }
+                    },
+                    modifier = Modifier.fillMaxSize()
                 )
             }
 
@@ -166,7 +168,13 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
                         lineColor = uiState.lineColor,
                         lineWidth = uiState.lineWidth,
                         brushWidth = uiState.brushWidth,
-                        polygonVertices = uiState.polygonVertices
+                        polygonVertices = uiState.polygonVertices,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                color = Color.LightGray,
+                                shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+                            )
                     )
                 }
             }
@@ -199,6 +207,7 @@ private fun DrawingCanvas(
     brushColor: Color,
     brushWidth: Float,
     onPathDrawn: (Figure) -> Unit,
+    modifier: Modifier = Modifier,
     onDrag: () -> Unit = { },
 ) {
 //    var tempPathPoints by remember { mutableStateOf(PathPoints()) }
@@ -209,8 +218,7 @@ private fun DrawingCanvas(
     val currentBrushWidth by rememberUpdatedState(brushWidth)
 
     Canvas(
-        Modifier
-            .fillMaxSize()
+        modifier
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDrag = { change, dragAmount ->
@@ -261,12 +269,15 @@ private fun ToolPanel(
     onDeleteAllClick: () -> Unit,
     changeCurrentEditorButton: (EditorButton?) -> Unit,
     changeIsPanelExpanded: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Column {
+    Column(modifier = modifier) {
         StateFigures(
             onPrevStateClick = onPrevStateClick,
             onForwardStateClick = onForwardStateClick,
-            onDeleteAllClick = onDeleteAllClick
+            onDeleteAllClick = onDeleteAllClick,
+            onPanelClick = { changeCurrentEditorButton(null) },
+            modifier = Modifier.fillMaxWidth()
         )
         ButtonsPanel(
             buttons = buttons,
@@ -278,7 +289,8 @@ private fun ToolPanel(
             onLongPress = {
                 changeCurrentEditorButton(it.type)
                 changeIsPanelExpanded(true)
-            }
+            },
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -288,10 +300,13 @@ private fun StateFigures(
     onPrevStateClick: () -> Unit,
     onForwardStateClick: () -> Unit,
     onDeleteAllClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    onPanelClick: () -> Unit = {},
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier
+            .clickable { onPanelClick() }
     ) {
         Row {
             IconButton(onClick = onPrevStateClick) {
@@ -323,9 +338,10 @@ private fun ButtonsPanel(
     buttons: List<EditorButtonSettings>,
     onClick: (EditorButtonSettings) -> Unit,
     onLongPress: (EditorButtonSettings) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     LazyRow(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -377,14 +393,10 @@ private fun FigureSettingsPanel(
     changeBrushColor: (Color) -> Unit,
     changeBrushWidth: (Float) -> Unit,
     changeBackgroundColor: (Color) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                color = Color.LightGray,
-                shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
-            )
+        modifier = modifier
             .pointerInput(Unit) { } // оставляем пустым, чтобы перехватить жесты, дабы не рисовать сквозь Box
     ) {
         Column {
