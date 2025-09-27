@@ -46,7 +46,6 @@ import com.example.photozhab.presentation.components.DialogToDeleteData
 import com.example.photozhab.presentation.components.VerticesPicker
 import com.example.photozhab.presentation.components.WidthPicker
 import com.example.photozhab.presentation.model.EditorButtonSettings
-import com.example.photozhab.presentation.model.PathData
 import com.example.photozhab.presentation.model.figures.Brush
 import com.example.photozhab.presentation.model.figures.Circle
 import com.example.photozhab.presentation.model.figures.Figure
@@ -55,7 +54,8 @@ import com.example.photozhab.presentation.model.figures.Polygon
 import com.example.photozhab.presentation.model.figures.Square
 import com.example.photozhab.presentation.model.figures.Triangle
 import com.example.photozhab.presentation.model.EditorButton
-import com.example.photozhab.presentation.model.PointF
+import com.example.photozhab.presentation.model.PathData
+import com.example.photozhab.presentation.model.PathPoints
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
@@ -201,7 +201,8 @@ private fun DrawingCanvas(
     onPathDrawn: (Figure) -> Unit,
     onDrag: () -> Unit = { },
 ) {
-    var currentPoints = remember { mutableListOf<PointF>() }
+//    var tempPathPoints by remember { mutableStateOf(PathPoints()) }
+    var currentPathPoints = remember { mutableListOf<PathPoints>() }
     val pathList = remember { mutableStateListOf(PathData()) }
 
     val currentBrushColor by rememberUpdatedState(brushColor)
@@ -214,17 +215,24 @@ private fun DrawingCanvas(
                 detectDragGestures(
                     onDrag = { change, dragAmount ->
                         onDrag()
-                        currentPoints.add(PointF(change.position.x, change.position.y))
-                        if (pathList.isNotEmpty()) pathList.removeLast()
-                        pathList.add(PathData(points = currentPoints))
+                        currentPathPoints.add(
+                            PathPoints(
+                                moveToX = change.position.x - dragAmount.x,
+                                moveToY = change.position.y - dragAmount.y,
+                                lineToX = change.position.x,
+                                lineToY = change.position.y
+                            )
+                        )
+                        if (pathList.isNotEmpty()) { pathList.removeLast() }
+                        pathList.add(PathData(pathPointsList = currentPathPoints))
                     },
-                    onDragStart = { currentPoints = mutableListOf() },
+                    onDragStart = { currentPathPoints = mutableListOf() },
                     onDragEnd = {
                         onPathDrawn(
                             Brush(
                                 color = currentBrushColor,
                                 brushWidth = currentBrushWidth,
-                                pathData = PathData(currentPoints.toList())
+                                path = PathData(pathPointsList = currentPathPoints)
                             )
                         )
                         pathList.clear()
@@ -297,7 +305,7 @@ private fun StateFigures(
                 )
             }
         }
-        IconButton(onClick = onDeleteAllClick) { // TODO("Добавить диалог, чтобы пользователь дал подтверждение")
+        IconButton(onClick = onDeleteAllClick) {
             Icon(
                 modifier = Modifier.size(20.dp),
                 painter = painterResource(R.drawable.trash),

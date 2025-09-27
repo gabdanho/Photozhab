@@ -12,14 +12,14 @@ import com.example.photozhab.presentation.model.PathData
 data class Brush(
     val color: Color,
     val brushWidth: Float,
-    var pathData: PathData = PathData(),
+    var path: PathData,
 ) : Figure {
 
     @Composable
     override fun draw() {
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawPath(
-                path = pathData.toPath(),
+                path = path.toPath(),
                 color = color,
                 style = Stroke(brushWidth, cap = StrokeCap.Round)
             )
