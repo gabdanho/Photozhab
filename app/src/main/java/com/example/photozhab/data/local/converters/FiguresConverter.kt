@@ -1,7 +1,7 @@
 package com.example.photozhab.data.local.converters
 
 import androidx.room.TypeConverter
-import com.example.photozhab.data.local.model.figures.Figure
+import com.example.photozhab.data.local.model.Figure
 import kotlinx.serialization.json.Json
 
 class FiguresConverter {

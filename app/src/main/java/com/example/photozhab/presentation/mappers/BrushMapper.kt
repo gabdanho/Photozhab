@@ -4,8 +4,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.fromColorLong
 import androidx.compose.ui.graphics.toColorLong
 import com.example.photozhab.presentation.model.PathData
-import com.example.photozhab.presentation.model.figures.Brush
-import com.example.photozhab.domain.model.canvas.figures.Brush as BrushDomain
+import com.example.photozhab.presentation.model.Figure.Brush
+import com.example.photozhab.domain.model.canvas.Figure.Brush as BrushDomain
 
 fun BrushDomain.toPresentationLayer(): Brush {
     return Brush(

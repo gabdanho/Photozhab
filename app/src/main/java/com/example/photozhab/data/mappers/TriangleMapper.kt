@@ -1,9 +1,9 @@
 package com.example.photozhab.data.mappers
 
 import com.example.photozhab.data.local.model.Offset
-import com.example.photozhab.data.local.model.figures.Triangle
+import com.example.photozhab.data.local.model.Figure.Triangle
 import com.example.photozhab.domain.model.canvas.Offset as OffsetDomain
-import com.example.photozhab.domain.model.canvas.figures.Triangle as TriangleDomain
+import com.example.photozhab.domain.model.canvas.Figure.Triangle as TriangleDomain
 
 fun TriangleDomain.toDataLayer(): Triangle {
     return Triangle(

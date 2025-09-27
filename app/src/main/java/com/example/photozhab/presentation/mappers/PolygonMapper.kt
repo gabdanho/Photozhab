@@ -5,8 +5,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.fromColorLong
 import androidx.compose.ui.graphics.toColorLong
 import com.example.photozhab.domain.model.canvas.Offset as OffsetDomain
-import com.example.photozhab.domain.model.canvas.figures.Polygon as PolygonDomain
-import com.example.photozhab.presentation.model.figures.Polygon
+import com.example.photozhab.domain.model.canvas.Figure.Polygon as PolygonDomain
+import com.example.photozhab.presentation.model.Figure.Polygon
 
 fun PolygonDomain.toPresentationLayer(): Polygon {
     return Polygon(

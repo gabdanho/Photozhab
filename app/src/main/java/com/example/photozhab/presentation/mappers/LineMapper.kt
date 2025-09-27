@@ -6,8 +6,8 @@ import androidx.compose.ui.graphics.fromColorLong
 import androidx.compose.ui.graphics.toColorLong
 import androidx.compose.ui.unit.dp
 import com.example.photozhab.domain.model.canvas.Offset as OffsetDomain
-import com.example.photozhab.domain.model.canvas.figures.Line as LineDomain
-import com.example.photozhab.presentation.model.figures.Line
+import com.example.photozhab.domain.model.canvas.Figure.Line as LineDomain
+import com.example.photozhab.presentation.model.Figure.Line
 
 fun LineDomain.toPresentationLayer(): Line {
     return Line(

@@ -2,8 +2,8 @@ package com.example.photozhab.data.mappers
 
 import com.example.photozhab.data.local.model.Offset
 import com.example.photozhab.domain.model.canvas.Offset as OffsetDomain
-import com.example.photozhab.data.local.model.figures.Polygon
-import com.example.photozhab.domain.model.canvas.figures.Polygon as PolygonDomain
+import com.example.photozhab.data.local.model.Figure.Polygon
+import com.example.photozhab.domain.model.canvas.Figure.Polygon as PolygonDomain
 
 fun PolygonDomain.toDataLayer(): Polygon {
     return Polygon(

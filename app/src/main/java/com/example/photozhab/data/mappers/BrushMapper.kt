@@ -1,7 +1,7 @@
 package com.example.photozhab.data.mappers
 
-import com.example.photozhab.data.local.model.figures.Brush
-import com.example.photozhab.domain.model.canvas.figures.Brush as BrushDomain
+import com.example.photozhab.data.local.model.Figure.Brush
+import com.example.photozhab.domain.model.canvas.Figure.Brush as BrushDomain
 
 fun BrushDomain.toDataLayer(): Brush {
     return Brush(
