@@ -1,4 +1,4 @@
-package com.example.photozhab.data.mappers
+package com.example.photozhab.data.mappers.figures
 
 import com.example.photozhab.data.local.model.Offset
 import com.example.photozhab.domain.model.canvas.Offset as OffsetDomain

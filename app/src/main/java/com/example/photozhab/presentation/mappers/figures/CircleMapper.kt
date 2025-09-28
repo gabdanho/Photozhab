@@ -1,15 +1,15 @@
-package com.example.photozhab.presentation.mappers
+package com.example.photozhab.presentation.mappers.figures
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.fromColorLong
 import androidx.compose.ui.graphics.toColorLong
+import com.example.photozhab.domain.model.canvas.Figure.Circle as CircleDomain
+import com.example.photozhab.presentation.model.Figure.Circle
 import com.example.photozhab.domain.model.canvas.Offset as OffsetDomain
-import com.example.photozhab.domain.model.canvas.Figure.Triangle as TriangleDomain
-import com.example.photozhab.presentation.model.Figure.Triangle
 
-fun TriangleDomain.toPresentationLayer(): Triangle {
-    return Triangle(
+fun CircleDomain.toPresentationLayer(): Circle {
+    return Circle(
         color = Color.fromColorLong(color),
         offset = Offset(offset.x, offset.y),
         angle = angle,
@@ -17,8 +17,8 @@ fun TriangleDomain.toPresentationLayer(): Triangle {
     )
 }
 
-fun Triangle.toDomainLayer(): TriangleDomain {
-    return TriangleDomain(
+fun Circle.toDomainLayer(): CircleDomain {
+    return CircleDomain(
         color = color.toColorLong(),
         offset = OffsetDomain(offset.x, offset.y),
         angle = angle,

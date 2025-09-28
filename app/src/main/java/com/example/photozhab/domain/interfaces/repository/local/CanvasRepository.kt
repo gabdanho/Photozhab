@@ -1,16 +1,19 @@
 package com.example.photozhab.domain.interfaces.repository.local
 
-import com.example.photozhab.data.local.entity.Canvas
+import com.example.photozhab.domain.model.canvas.Canvas
+import com.example.photozhab.domain.model.canvas.CanvasInfo
 
 interface CanvasRepository {
 
-    fun saveCanvas(canvas: Canvas): Boolean
+    suspend fun saveCanvas(canvas: Canvas): Boolean
 
-    fun deleteCanvas(id: Int): Boolean
+    suspend fun deleteCanvas(id: Int): Boolean
 
-    fun getCanvasById(id: Int): Canvas?
+    suspend fun getCanvasById(id: Int): Canvas?
 
-    fun saveTempCanvas(canvas: Canvas): Boolean
+    suspend fun saveTempCanvas(canvas: Canvas): Boolean
 
-    fun getTempCanvas(): Canvas?
+    suspend fun getTempCanvas(): Canvas?
+
+    suspend fun getCanvases(): List<CanvasInfo>
 }

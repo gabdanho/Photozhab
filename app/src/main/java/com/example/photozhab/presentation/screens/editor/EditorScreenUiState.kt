@@ -3,8 +3,9 @@ package com.example.photozhab.presentation.screens.editor
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
+import com.example.photozhab.presentation.model.CanvasInfo
 import com.example.photozhab.presentation.model.EditorButton
-import com.example.photozhab.presentation.model.figures.Figure
+import com.example.photozhab.presentation.model.Figure
 
 data class EditorScreenUiState(
     val figures: SnapshotStateList<Figure> = mutableStateListOf(),
@@ -19,9 +20,17 @@ data class EditorScreenUiState(
     val brushWidth: Float = 5f,
     val polygonVertices: Int = 5,
     val lineWidth: Float = 5f,
+    val savedProjectIdToDelete: Int = 0,
+
+    val projectNameValue: String = "",
+    val savedProjects: List<CanvasInfo> = emptyList(),
 
     val isBrushChosen: Boolean = false,
     val isPanelExpanded: Boolean = false,
     val currentEditorButton: EditorButton? = null,
+
     val isShowWarningDialog: Boolean = false,
+    val isShowSavedProjectsDialog: Boolean = false,
+    val isShowProjectSaverDialog: Boolean = false,
+    val isShowDeleteSavedProject: Boolean = false,
 )

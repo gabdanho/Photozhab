@@ -25,6 +25,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -41,19 +42,16 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.photozhab.R
+import com.example.photozhab.presentation.components.dialogs.SavedProjectDialog
 import com.example.photozhab.presentation.components.ColorPicker
-import com.example.photozhab.presentation.components.DialogToDeleteData
+import com.example.photozhab.presentation.components.dialogs.DeleteDataDialog
 import com.example.photozhab.presentation.components.VerticesPicker
 import com.example.photozhab.presentation.components.WidthPicker
+import com.example.photozhab.presentation.components.dialogs.ProjectSaverDialog
 import com.example.photozhab.presentation.model.EditorButtonSettings
-import com.example.photozhab.presentation.model.figures.Brush
-import com.example.photozhab.presentation.model.figures.Circle
-import com.example.photozhab.presentation.model.figures.Figure
-import com.example.photozhab.presentation.model.figures.Line
-import com.example.photozhab.presentation.model.figures.Polygon
-import com.example.photozhab.presentation.model.figures.Square
-import com.example.photozhab.presentation.model.figures.Triangle
+import com.example.photozhab.presentation.model.Figure
 import com.example.photozhab.presentation.model.EditorButton
 import com.example.photozhab.presentation.model.PathData
 import com.example.photozhab.presentation.model.PathPoints
@@ -62,6 +60,7 @@ import com.example.photozhab.presentation.model.PathPoints
 @Composable
 fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenViewModel>()) {
     val uiState by viewModel.uiState.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
     val buttons = listOf(
         EditorButtonSettings(
             icon = R.drawable.brush,
@@ -73,26 +72,26 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
             icon = R.drawable.circle,
             type = EditorButton.CIRCLE
         ) {
-            viewModel.addFigure(figure = Circle(color = uiState.circleColor))
+            viewModel.addFigure(figure = Figure.Circle(color = uiState.circleColor))
         },
         EditorButtonSettings(
             icon = R.drawable.square,
             type = EditorButton.SQUARE
         ) {
-            viewModel.addFigure(figure = Square(color = uiState.squareColor))
+            viewModel.addFigure(figure = Figure.Square(color = uiState.squareColor))
         },
         EditorButtonSettings(
             icon = R.drawable.triangle,
             type = EditorButton.TRIANGLE
         ) {
-            viewModel.addFigure(figure = Triangle(color = uiState.triangleColor))
+            viewModel.addFigure(figure = Figure.Triangle(color = uiState.triangleColor))
         },
         EditorButtonSettings(
             icon = R.drawable.polygon,
             type = EditorButton.POLYGON
         ) {
             viewModel.addFigure(
-                figure = Polygon(
+                figure = Figure.Polygon(
                     color = uiState.polygonColor,
                     vertices = uiState.polygonVertices
                 )
@@ -103,7 +102,7 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
             type = EditorButton.LINE
         ) {
             viewModel.addFigure(
-                figure = Line(
+                figure = Figure.Line(
                     color = uiState.lineColor,
                     lineWidth = uiState.lineWidth
                 )
@@ -114,6 +113,15 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
             type = EditorButton.BACKGROUND
         ) { }
     )
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = EditorScreenLifecycleObserver { viewModel.saveTempCanvas() }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     BackHandler(enabled = uiState.isPanelExpanded) {
         viewModel.changeIsPanelExpanded(value = false)
@@ -186,16 +194,67 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
             onForwardStateClick = { viewModel.forwardState() },
             onDeleteAllClick = { viewModel.changeIsShowWarningDialog(value = true) },
             changeCurrentEditorButton = { viewModel.changeCurrentEditorButton(editorButton = it) },
-            changeIsPanelExpanded = { viewModel.changeIsPanelExpanded(value = it) }
+            changeIsPanelExpanded = { viewModel.changeIsPanelExpanded(value = it) },
+            onSavesClick = { viewModel.changeIsShowSavedProjectsDialog(value = true) }
         )
     }
 
     if (uiState.isShowWarningDialog) {
-        DialogToDeleteData(
+        DeleteDataDialog(
             onDismiss = { viewModel.changeIsShowWarningDialog(value = false) },
             onAccess = {
-                viewModel.deleteAllFigures()
+                viewModel.deleteAllFiguresAndClearBackground()
                 viewModel.changeIsShowWarningDialog(value = false)
+            }
+        )
+    }
+
+    if (uiState.isShowDeleteSavedProject) {
+        DeleteDataDialog(
+            onDismiss = {
+                viewModel.changeIsShowDeleteSavedProject(value = false)
+                viewModel.changeIsShowSavedProjectsDialog(value = true)
+            },
+            onAccess = {
+                viewModel.deleteProject()
+                viewModel.changeIsShowDeleteSavedProject(value = false)
+                viewModel.changeIsShowSavedProjectsDialog(value = true)
+            }
+        )
+    }
+
+    if (uiState.isShowSavedProjectsDialog) {
+        SavedProjectDialog(
+            canvases = uiState.savedProjects,
+            onDismiss = { viewModel.changeIsShowSavedProjectsDialog(value = false) },
+            onSave = {
+                viewModel.changeIsShowSavedProjectsDialog(value = false)
+                viewModel.changeIsShowProjectSaverDialog(value = true)
+            },
+            onDelete = { id ->
+                viewModel.changeSavedProjectIdToDelete(id)
+                viewModel.changeIsShowSavedProjectsDialog(value = false)
+                viewModel.changeIsShowDeleteSavedProject(value = true)
+            },
+            onOpen = { id ->
+                viewModel.getProjectById(id)
+                viewModel.changeIsShowSavedProjectsDialog(value = false)
+            },
+            modifier = Modifier.fillMaxSize(0.9f)
+        )
+    }
+
+    if (uiState.isShowProjectSaverDialog) {
+        ProjectSaverDialog(
+            name = uiState.projectNameValue,
+            onNameChanged = { viewModel.changeProjectNameValue(value = it) },
+            onDismiss = {
+                viewModel.changeIsShowProjectSaverDialog(value = false)
+                viewModel.changeIsShowSavedProjectsDialog(value = true)
+            },
+            onSave = {
+                viewModel.saveProject()
+                viewModel.changeIsShowProjectSaverDialog(value = false)
             }
         )
     }
@@ -210,7 +269,6 @@ private fun DrawingCanvas(
     modifier: Modifier = Modifier,
     onDrag: () -> Unit = { },
 ) {
-//    var tempPathPoints by remember { mutableStateOf(PathPoints()) }
     var currentPathPoints = remember { mutableListOf<PathPoints>() }
     val pathList = remember { mutableStateListOf(PathData()) }
 
@@ -239,7 +297,7 @@ private fun DrawingCanvas(
                     onDragStart = { currentPathPoints = mutableListOf() },
                     onDragEnd = {
                         onPathDrawn(
-                            Brush(
+                            Figure.Brush(
                                 color = currentBrushColor,
                                 brushWidth = currentBrushWidth,
                                 path = PathData(pathPointsList = currentPathPoints)
@@ -264,6 +322,7 @@ private fun DrawingCanvas(
 private fun ToolPanel(
     buttons: List<EditorButtonSettings>,
     isBrushChosen: Boolean,
+    onSavesClick: () -> Unit,
     onPrevStateClick: () -> Unit,
     onForwardStateClick: () -> Unit,
     onDeleteAllClick: () -> Unit,
@@ -277,6 +336,7 @@ private fun ToolPanel(
             onForwardStateClick = onForwardStateClick,
             onDeleteAllClick = onDeleteAllClick,
             onPanelClick = { changeCurrentEditorButton(null) },
+            onSavesClick = { onSavesClick() },
             modifier = Modifier.fillMaxWidth()
         )
         ButtonsPanel(
@@ -300,6 +360,7 @@ private fun StateFigures(
     onPrevStateClick: () -> Unit,
     onForwardStateClick: () -> Unit,
     onDeleteAllClick: () -> Unit,
+    onSavesClick: () -> Unit,
     modifier: Modifier = Modifier,
     onPanelClick: () -> Unit = {},
 ) {
@@ -322,12 +383,21 @@ private fun StateFigures(
                 )
             }
         }
-        IconButton(onClick = onDeleteAllClick) {
-            Icon(
-                modifier = Modifier.size(20.dp),
-                painter = painterResource(R.drawable.trash),
-                contentDescription = "Delete all"
-            )
+        Row {
+            IconButton(onClick = onSavesClick) {
+                Icon(
+                    modifier = Modifier.size(20.dp),
+                    painter = painterResource(R.drawable.diskette),
+                    contentDescription = "Saves"
+                )
+            }
+            IconButton(onClick = onDeleteAllClick) {
+                Icon(
+                    modifier = Modifier.size(20.dp),
+                    painter = painterResource(R.drawable.trash),
+                    contentDescription = "Delete all"
+                )
+            }
         }
     }
 }

@@ -5,16 +5,20 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.photozhab.data.local.entity.Canvas
+import com.example.photozhab.data.local.model.CanvasInfo
 
 @Dao
 interface CanvasDao {
 
     @Query("SELECT * FROM canvas WHERE id = :id")
-    fun getCanvasById(id: Int): Canvas
+    suspend fun getCanvasById(id: Int): Canvas
 
     @Query("DELETE FROM canvas WHERE id = :id")
-    fun deleteCanvasById(id: Int)
+    suspend fun deleteCanvasById(id: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertCanvas(canvas: Canvas)
+    suspend fun insertCanvas(canvas: Canvas)
+
+    @Query("SELECT id, name FROM canvas WHERE id != 1")
+    suspend fun getCanvasesInfo(): List<CanvasInfo>
 }

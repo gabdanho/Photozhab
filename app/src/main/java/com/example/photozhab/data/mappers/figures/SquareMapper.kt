@@ -1,16 +1,13 @@
-package com.example.photozhab.presentation.mappers
+package com.example.photozhab.data.mappers.figures
 
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.fromColorLong
-import androidx.compose.ui.graphics.toColorLong
+import com.example.photozhab.data.local.model.Offset
+import com.example.photozhab.data.local.model.Figure.Square
 import com.example.photozhab.domain.model.canvas.Offset as OffsetDomain
 import com.example.photozhab.domain.model.canvas.Figure.Square as SquareDomain
-import com.example.photozhab.presentation.model.Figure.Square
 
-fun SquareDomain.toPresentationLayer(): Square {
+fun SquareDomain.toDataLayer(): Square {
     return Square(
-        color = Color.fromColorLong(color),
+        color = color,
         offset = Offset(offset.x, offset.y),
         angle = angle,
         scale = scale
@@ -19,7 +16,7 @@ fun SquareDomain.toPresentationLayer(): Square {
 
 fun Square.toDomainLayer(): SquareDomain {
     return SquareDomain(
-        color = color.toColorLong(),
+        color = color,
         offset = OffsetDomain(offset.x, offset.y),
         angle = angle,
         scale = scale

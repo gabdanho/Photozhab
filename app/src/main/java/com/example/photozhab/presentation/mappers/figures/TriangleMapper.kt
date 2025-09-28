@@ -1,30 +1,27 @@
-package com.example.photozhab.presentation.mappers
+package com.example.photozhab.presentation.mappers.figures
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.fromColorLong
 import androidx.compose.ui.graphics.toColorLong
-import androidx.compose.ui.unit.dp
 import com.example.photozhab.domain.model.canvas.Offset as OffsetDomain
-import com.example.photozhab.domain.model.canvas.Figure.Line as LineDomain
-import com.example.photozhab.presentation.model.Figure.Line
+import com.example.photozhab.domain.model.canvas.Figure.Triangle as TriangleDomain
+import com.example.photozhab.presentation.model.Figure.Triangle
 
-fun LineDomain.toPresentationLayer(): Line {
-    return Line(
+fun TriangleDomain.toPresentationLayer(): Triangle {
+    return Triangle(
         color = Color.fromColorLong(color),
         offset = Offset(offset.x, offset.y),
         angle = angle,
-        widthDp = widthDp.dp,
-        lineWidth = lineWidth
+        scale = scale
     )
 }
 
-fun Line.toDomainLayer(): LineDomain {
-    return LineDomain(
+fun Triangle.toDomainLayer(): TriangleDomain {
+    return TriangleDomain(
         color = color.toColorLong(),
         offset = OffsetDomain(offset.x, offset.y),
         angle = angle,
-        widthDp = widthDp.value.toInt(),
-        lineWidth = lineWidth
+        scale = scale
     )
 }

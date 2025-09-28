@@ -1,4 +1,4 @@
-package com.example.photozhab.presentation.components
+package com.example.photozhab.presentation.components.dialogs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 
 @Composable
-fun DialogToDeleteData(
+fun DeleteDataDialog(
     onDismiss: () -> Unit,
     onAccess: () -> Unit,
     modifier: Modifier = Modifier,

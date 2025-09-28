@@ -1,4 +1,4 @@
-package com.example.photozhab.presentation.mappers
+package com.example.photozhab.presentation.mappers.figures
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.fromColorLong
