@@ -18,12 +18,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toColorLong
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun ColorPicker(
     currentColor: Color,
-    changeColor: (Color) -> Unit,
+    changeColor: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val red = rememberSaveable { mutableFloatStateOf(currentColor.red) }
@@ -37,7 +38,7 @@ fun ColorPicker(
     }
 
     LaunchedEffect(color) {
-        changeColor(color)
+        changeColor(color.toColorLong())
     }
 
     Column(

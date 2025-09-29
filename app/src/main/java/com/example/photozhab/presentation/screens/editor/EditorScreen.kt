@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.fromColorLong
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -59,7 +60,7 @@ import com.example.photozhab.presentation.model.Figure
 import com.example.photozhab.presentation.model.EditorButton
 import com.example.photozhab.presentation.model.PathData
 import com.example.photozhab.presentation.model.PathPoints
-import com.example.photozhab.presentation.model.EditButtonProperties
+import com.example.photozhab.presentation.model.EditorButtonsProperties
 import com.example.photozhab.presentation.model.ToolsStateFunctions
 import com.example.photozhab.presentation.utils.saveToBitmap
 import kotlinx.coroutines.launch
@@ -68,7 +69,7 @@ val LocalToolsStateFunctions = compositionLocalOf<ToolsStateFunctions> {
     error("ToolsStateFunctions must be provide")
 }
 
-val LocalEditButtonProperties = compositionLocalOf<EditButtonProperties> {
+val LocalEditorButtonsProperties = compositionLocalOf<EditorButtonsProperties> {
     error("EditButtonProperties must be provide")
 }
 
@@ -90,19 +91,19 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
             icon = R.drawable.circle,
             type = EditorButton.CIRCLE
         ) {
-            viewModel.addFigure(figure = Figure.Circle(color = uiState.circleColor))
+            viewModel.addFigure(figure = Figure.Circle(color = Color.fromColorLong(uiState.circleColor)))
         },
         EditorButtonSettings(
             icon = R.drawable.square,
             type = EditorButton.SQUARE
         ) {
-            viewModel.addFigure(figure = Figure.Square(color = uiState.squareColor))
+            viewModel.addFigure(figure = Figure.Square(color = Color.fromColorLong(uiState.squareColor)))
         },
         EditorButtonSettings(
             icon = R.drawable.triangle,
             type = EditorButton.TRIANGLE
         ) {
-            viewModel.addFigure(figure = Figure.Triangle(color = uiState.triangleColor))
+            viewModel.addFigure(figure = Figure.Triangle(color = Color.fromColorLong(uiState.triangleColor)))
         },
         EditorButtonSettings(
             icon = R.drawable.polygon,
@@ -110,7 +111,7 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
         ) {
             viewModel.addFigure(
                 figure = Figure.Polygon(
-                    color = uiState.polygonColor,
+                    color = Color.fromColorLong(uiState.polygonColor),
                     vertices = uiState.polygonVertices
                 )
             )
@@ -121,7 +122,7 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
         ) {
             viewModel.addFigure(
                 figure = Figure.Line(
-                    color = uiState.lineColor,
+                    color = Color.fromColorLong(uiState.lineColor),
                     lineWidth = uiState.lineWidth
                 )
             )
@@ -159,7 +160,7 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
                 .weight(1f)
                 .clipToBounds()
                 .drawBehind {
-                    drawRect(color = uiState.backgroundColor)
+                    drawRect(color = Color.fromColorLong(uiState.backgroundColor))
                 }
         ) {
             uiState.figures.forEach { figure ->
@@ -167,7 +168,7 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
             }
             if (uiState.isBrushChosen) {
                 DrawingCanvas(
-                    brushColor = uiState.brushColor,
+                    brushColor = Color.fromColorLong(uiState.brushColor),
                     brushWidth = uiState.brushWidth,
                     onPathDrawn = { viewModel.addFigure(figure = it) },
                     onDrag = {
@@ -179,25 +180,25 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
 
             if (uiState.isPanelExpanded) {
                 CompositionLocalProvider(
-                    LocalEditButtonProperties provides EditButtonProperties(
+                    LocalEditorButtonsProperties provides EditorButtonsProperties(
                         pressedCurrentEditorButton = uiState.currentEditorButton,
                         changePolygonVertices = { viewModel.changePolygonVertices(vertices = it) },
-                        changeTriangleColor = { viewModel.changeTriangleColor(color = it) },
-                        changeCircleColor = { viewModel.changeCircleColor(color = it) },
-                        changeSquareColor = { viewModel.changeSquareColor(color = it) },
-                        changePolygonColor = { viewModel.changePolygonColor(color = it) },
-                        changeLineColor = { viewModel.changeLineColor(color = it) },
+                        changeTriangleColor = { viewModel.changeTriangleColor(colorLong = it) },
+                        changeCircleColor = { viewModel.changeCircleColor(colorLong = it) },
+                        changeSquareColor = { viewModel.changeSquareColor(colorLong = it) },
+                        changePolygonColor = { viewModel.changePolygonColor(colorLong = it) },
+                        changeLineColor = { viewModel.changeLineColor(colorLong = it) },
                         changeLineWidth = { viewModel.changeLineWidth(width = it) },
                         changeBrushWidth = { viewModel.changeBrushWidth(width = it) },
-                        changeBrushColor = { viewModel.changeBrushColor(color = it) },
-                        changeBackgroundColor = { viewModel.changeBackgroundColor(color = it) },
-                        brushColor = uiState.brushColor,
-                        circleColor = uiState.circleColor,
-                        squareColor = uiState.squareColor,
-                        triangleColor = uiState.triangleColor,
-                        polygonColor = uiState.polygonColor,
-                        backgroundColor = uiState.backgroundColor,
-                        lineColor = uiState.lineColor,
+                        changeBrushColor = { viewModel.changeBrushColor(colorLong = it) },
+                        changeBackgroundColor = { viewModel.changeBackgroundColor(colorLong = it) },
+                        brushColor = Color.fromColorLong(uiState.brushColor),
+                        circleColor = Color.fromColorLong(uiState.circleColor),
+                        squareColor = Color.fromColorLong(uiState.squareColor),
+                        triangleColor = Color.fromColorLong(uiState.triangleColor),
+                        polygonColor = Color.fromColorLong(uiState.polygonColor),
+                        backgroundColor = Color.fromColorLong(uiState.backgroundColor),
+                        lineColor = Color.fromColorLong(uiState.lineColor),
                         lineWidth = uiState.lineWidth,
                         brushWidth = uiState.brushWidth,
                         polygonVertices = uiState.polygonVertices
@@ -478,7 +479,7 @@ private fun ButtonsPanel(
 
 @Composable
 private fun FigureSettingsPanel(modifier: Modifier = Modifier) {
-    val buttonsProperties = LocalEditButtonProperties.current
+    val buttonsProperties = LocalEditorButtonsProperties.current
 
     Box(
         modifier = modifier

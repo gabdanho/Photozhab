@@ -1,19 +1,20 @@
 package com.example.photozhab.presentation.screens.editor
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toColorLong
 import com.example.photozhab.presentation.model.CanvasInfo
 import com.example.photozhab.presentation.model.EditorButton
 import com.example.photozhab.presentation.model.Figure
 
 data class EditorScreenUiState(
     val figures: List<Figure> = emptyList(),
-    val circleColor: Color = Color.Green,
-    val squareColor: Color = Color.Blue,
-    val brushColor: Color = Color.Red,
-    val triangleColor: Color = Color.Yellow,
-    val polygonColor: Color = Color.Magenta,
-    val backgroundColor: Color = Color.Black,
-    val lineColor: Color = Color.Green,
+    val circleColor: Long = Color.Green.toColorLong(),
+    val squareColor: Long = Color.Blue.toColorLong(),
+    val brushColor: Long = Color.Red.toColorLong(),
+    val triangleColor: Long = Color.Yellow.toColorLong(),
+    val polygonColor: Long = Color.Magenta.toColorLong(),
+    val backgroundColor: Long = Color.Black.toColorLong(),
+    val lineColor: Long = Color.Green.toColorLong(),
 
     val brushWidth: Float = 5f,
     val polygonVertices: Int = 5,

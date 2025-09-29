@@ -2,7 +2,6 @@ package com.example.photozhab.presentation.screens.editor
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.toMutableStateList
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.photozhab.domain.interfaces.repository.local.CanvasRepository
@@ -62,7 +61,7 @@ class EditorScreenViewModel @Inject constructor(
     fun deleteAllFiguresAndClearBackground() {
         _uiState.update { it.copy(figures = emptyList()) }
         deletedFigures.clear()
-        _uiState.update { state -> state.copy(backgroundColor = Color.Black) }
+        _uiState.update { state -> state.copy(backgroundColor = 0xFF000000) }
     }
 
     fun changeProjectNameValue(value: String) =
@@ -91,13 +90,13 @@ class EditorScreenViewModel @Inject constructor(
     // SETTING FIGURE PARAMS
     ///////////////////////////////////////////////////////////////////////////
 
-    fun changeCircleColor(color: Color) = _uiState.update { it.copy(circleColor = color) }
-    fun changeSquareColor(color: Color) = _uiState.update { it.copy(squareColor = color) }
-    fun changeBrushColor(color: Color) = _uiState.update { it.copy(brushColor = color) }
-    fun changeTriangleColor(color: Color) = _uiState.update { it.copy(triangleColor = color) }
-    fun changePolygonColor(color: Color) = _uiState.update { it.copy(polygonColor = color) }
-    fun changeLineColor(color: Color) = _uiState.update { it.copy(lineColor = color) }
-    fun changeBackgroundColor(color: Color) = _uiState.update { it.copy(backgroundColor = color) }
+    fun changeCircleColor(colorLong: Long) = _uiState.update { it.copy(circleColor = colorLong) }
+    fun changeSquareColor(colorLong: Long) = _uiState.update { it.copy(squareColor = colorLong) }
+    fun changeBrushColor(colorLong: Long) = _uiState.update { it.copy(brushColor = colorLong) }
+    fun changeTriangleColor(colorLong: Long) = _uiState.update { it.copy(triangleColor = colorLong) }
+    fun changePolygonColor(colorLong: Long) = _uiState.update { it.copy(polygonColor = colorLong) }
+    fun changeLineColor(colorLong: Long) = _uiState.update { it.copy(lineColor = colorLong) }
+    fun changeBackgroundColor(colorLong: Long) = _uiState.update { it.copy(backgroundColor = colorLong) }
     fun changeBrushWidth(width: Float) = _uiState.update { it.copy(brushWidth = width) }
     fun changePolygonVertices(vertices: Int) =
         _uiState.update { it.copy(polygonVertices = vertices) }

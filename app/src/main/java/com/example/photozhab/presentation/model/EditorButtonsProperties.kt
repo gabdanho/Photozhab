@@ -2,7 +2,7 @@ package com.example.photozhab.presentation.model
 
 import androidx.compose.ui.graphics.Color
 
-data class EditButtonProperties(
+data class EditorButtonsProperties(
     val pressedCurrentEditorButton: EditorButton?,
     val brushColor: Color,
     val circleColor: Color,
@@ -14,14 +14,14 @@ data class EditButtonProperties(
     val brushWidth: Float,
     val lineWidth: Float,
     val polygonVertices: Int,
-    val changeCircleColor: (Color) -> Unit,
-    val changeSquareColor: (Color) -> Unit,
-    val changeTriangleColor: (Color) -> Unit,
-    val changePolygonColor: (Color) -> Unit,
-    val changeLineColor: (Color) -> Unit,
+    val changeCircleColor: (Long) -> Unit,
+    val changeSquareColor: (Long) -> Unit,
+    val changeTriangleColor: (Long) -> Unit,
+    val changePolygonColor: (Long) -> Unit,
+    val changeLineColor: (Long) -> Unit,
+    val changeBrushColor: (Long) -> Unit,
+    val changeBackgroundColor: (Long) -> Unit,
     val changePolygonVertices: (Int) -> Unit,
     val changeLineWidth: (Float) -> Unit,
-    val changeBrushColor: (Color) -> Unit,
     val changeBrushWidth: (Float) -> Unit,
-    val changeBackgroundColor: (Color) -> Unit,
 )
