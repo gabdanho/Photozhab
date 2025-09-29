@@ -1,3 +1,30 @@
 <resources>
     <string name="app_name">Photozhab</string>
+
+    <string name="text_load_project">The project opened successfully</string>
+    <string name="text_save_project">The project saved successfully</string>
+    <string name="text_load_in_gallery">The project saved to gallery</string>
+    <string name="text_delete_project">The project deleted successfully</string>
+
+    <string name="error_load_project">Error: The project opened unsuccessfully</string>
+    <string name="error_save_project">Error: The project saved unsuccessfully</string>
+    <string name="error_load_in_gallery">Error: The project does not saved to gallery</string>
+    <string name="error_delete_project">Error: The project deleted unsuccessfully</string>
+    <string name="content_previous_state">Previous state</string>
+    <string name="content_forward_state">Forward state</string>
+    <string name="content_save_to_gallery">Save to gallery</string>
+    <string name="content_saves">Saves</string>
+    <string name="content_delete_all">Delete all</string>
+    <string name="text_color">Color</string>
+    <string name="text_want_to_delete_the_data">Are you sure you want to delete the data?</string>
+    <string name="button_yes">Yes</string>
+    <string name="button_no">No</string>
+    <string name="text_enter_the_name">Enter the project name</string>
+    <string name="button_save">Save</string>
+    <string name="text_saved_projects">Saved projects</string>
+    <string name="text_there_are_no_saved_projects">There are no saved projects</string>
+    <string name="text_save_this_project">Save this project</string>
+    <string name="text_delete_canvas">Delete canvas: %1$s</string>
+    <string name="text_vertices">Vertices</string>
+    <string name="text_line_width">Line width</string>
 </resources>

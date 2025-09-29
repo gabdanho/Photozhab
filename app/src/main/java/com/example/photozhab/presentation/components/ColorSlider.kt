@@ -2,7 +2,6 @@ package com.example.photozhab.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -13,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import com.example.photozhab.presentation.ui.theme.defaultDimensions
 import com.example.photozhab.presentation.utils.toColorInt
 
 @Composable
@@ -25,7 +24,7 @@ fun ColorSlider(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
     ) {
         Text(text = label)
@@ -35,11 +34,10 @@ fun ColorSlider(
             colors = SliderDefaults.colors(
                 activeTrackColor = color
             ),
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(defaultDimensions.fullWeight)
         )
         Text(
             text = valueState.value.toColorInt().toString(),
-            modifier = Modifier.width(25.dp),
             textAlign = TextAlign.End,
             style = MaterialTheme.typography.bodySmall
         )

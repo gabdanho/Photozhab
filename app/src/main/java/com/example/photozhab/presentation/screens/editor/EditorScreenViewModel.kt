@@ -12,6 +12,9 @@ import com.example.photozhab.presentation.mappers.toPresentationLayer
 import com.example.photozhab.presentation.model.CanvasSave
 import com.example.photozhab.presentation.model.EditorButton
 import com.example.photozhab.presentation.model.Figure
+import com.example.photozhab.presentation.model.LoadingState
+import com.example.photozhab.presentation.model.StringResNamePresentation
+import com.example.photozhab.presentation.model.UiMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -82,8 +85,12 @@ class EditorScreenViewModel @Inject constructor(
     fun changeIsShowProjectSaverDialog(value: Boolean) =
         _uiState.update { it.copy(isShowProjectSaverDialog = value) }
 
-    fun changeIsBrushChosen(value: Boolean) = _uiState.update { it.copy(isBrushChosen = value) }
-    fun changeIsPanelExpanded(value: Boolean) = _uiState.update { it.copy(isPanelExpanded = value) }
+    fun changeIsBrushChosen(value: Boolean) =
+        _uiState.update { it.copy(isBrushChosen = value) }
+
+    fun changeIsPanelExpanded(value: Boolean) =
+        _uiState.update { it.copy(isPanelExpanded = value) }
+
     fun changeCurrentEditorButton(editorButton: EditorButton?) =
         _uiState.update { it.copy(currentEditorButton = editorButton) }
 
@@ -93,10 +100,14 @@ class EditorScreenViewModel @Inject constructor(
     fun changeCircleColor(colorLong: Long) = _uiState.update { it.copy(circleColor = colorLong) }
     fun changeSquareColor(colorLong: Long) = _uiState.update { it.copy(squareColor = colorLong) }
     fun changeBrushColor(colorLong: Long) = _uiState.update { it.copy(brushColor = colorLong) }
-    fun changeTriangleColor(colorLong: Long) = _uiState.update { it.copy(triangleColor = colorLong) }
+    fun changeTriangleColor(colorLong: Long) =
+        _uiState.update { it.copy(triangleColor = colorLong) }
+
     fun changePolygonColor(colorLong: Long) = _uiState.update { it.copy(polygonColor = colorLong) }
     fun changeLineColor(colorLong: Long) = _uiState.update { it.copy(lineColor = colorLong) }
-    fun changeBackgroundColor(colorLong: Long) = _uiState.update { it.copy(backgroundColor = colorLong) }
+    fun changeBackgroundColor(colorLong: Long) =
+        _uiState.update { it.copy(backgroundColor = colorLong) }
+
     fun changeBrushWidth(width: Float) = _uiState.update { it.copy(brushWidth = width) }
     fun changePolygonVertices(vertices: Int) =
         _uiState.update { it.copy(polygonVertices = vertices) }
@@ -107,40 +118,89 @@ class EditorScreenViewModel @Inject constructor(
 
     fun saveProject() {
         viewModelScope.launch {
-            val newCanvas = CanvasSave(
-                name = _uiState.value.projectNameValue,
-                backgroundColor = _uiState.value.backgroundColor,
-                figures = _uiState.value.figures
-            ).toDomainLayer()
+            _uiState.update { it.copy(loadingState = LoadingState.Loading) }
+            try {
+                val newCanvas = CanvasSave(
+                    name = _uiState.value.projectNameValue,
+                    backgroundColor = _uiState.value.backgroundColor,
+                    figures = _uiState.value.figures
+                ).toDomainLayer()
 
-            canvasRepository.saveCanvas(
-                canvas = newCanvas
-            )
-            deleteAllFiguresAndClearBackground()
-            getSavedProjects()
+                canvasRepository.saveCanvas(
+                    canvas = newCanvas
+                )
+                deleteAllFiguresAndClearBackground()
+                getSavedProjects()
+                _uiState.update {
+                    it.copy(
+                        loadingState = LoadingState.Success,
+                        uiMessage = UiMessage(textResName = StringResNamePresentation.SUCCESS_SAVE_PROJECT)
+                    )
+                }
+            } catch (_: Exception) {
+                _uiState.update {
+                    it.copy(
+                        loadingState = LoadingState.Error,
+                        uiMessage = UiMessage(textResName = StringResNamePresentation.ERROR_SAVE_PROJECT)
+                    )
+                }
+            }
         }
     }
 
     fun deleteProject() {
-        viewModelScope.launch {
-            val id = _uiState.value.savedProjectIdToDelete
-            canvasRepository.deleteCanvas(id)
-            _uiState.update { state -> state.copy(savedProjects = state.savedProjects.filterNot { it.id == id }) }
+        _uiState.update { it.copy(loadingState = LoadingState.Loading) }
+        try {
+            viewModelScope.launch {
+                val id = _uiState.value.savedProjectIdToDelete
+                canvasRepository.deleteCanvas(id)
+                _uiState.update { state ->
+                    state.copy(
+                        savedProjects = state.savedProjects.filterNot { it.id == id },
+                        loadingState = LoadingState.Success,
+                        uiMessage = UiMessage(textResName = StringResNamePresentation.SUCCESS_DELETE_PROJECT)
+                    )
+                }
+            }
+        } catch (_: Exception) {
+            _uiState.update {
+                it.copy(
+                    loadingState = LoadingState.Error,
+                    uiMessage = UiMessage(textResName = StringResNamePresentation.ERROR_DELETE_PROJECT)
+                )
+            }
         }
     }
 
     fun getProjectById(id: Int) {
         viewModelScope.launch {
-            canvasRepository.getCanvasById(id)?.let {
-                val canvas = it.toPresentationLayer()
-                _uiState.update { state ->
-                    state.copy(
-                        figures = canvas.figures.toMutableStateList(),
-                        backgroundColor = canvas.backgroundColor
+            _uiState.update { it.copy(loadingState = LoadingState.Loading) }
+            try {
+                canvasRepository.getCanvasById(id)?.let {
+                    val canvas = it.toPresentationLayer()
+                    _uiState.update { state ->
+                        state.copy(
+                            figures = canvas.figures.toMutableStateList(),
+                            backgroundColor = canvas.backgroundColor
+                        )
+                    }
+                }
+                deletedFigures.clear()
+                _uiState.update {
+                    it.copy(
+                        loadingState = LoadingState.Success,
+                        uiMessage = UiMessage(textResName = StringResNamePresentation.SUCCESS_LOAD_PROJECT)
+                    )
+                }
+
+            } catch (_: Exception) {
+                _uiState.update {
+                    it.copy(
+                        loadingState = LoadingState.Error,
+                        uiMessage = UiMessage(textResName = StringResNamePresentation.ERROR_LOAD_PROJECT)
                     )
                 }
             }
-            deletedFigures.clear()
         }
     }
 
@@ -158,8 +218,28 @@ class EditorScreenViewModel @Inject constructor(
 
     fun saveToGallery(bitmap: Bitmap) {
         viewModelScope.launch {
-            galleryRepository.saveProjectInGallery(bitmap = bitmap)
+            _uiState.update { it.copy(loadingState = LoadingState.Loading) }
+            try {
+                galleryRepository.saveProjectInGallery(bitmap = bitmap)
+                _uiState.update {
+                    it.copy(
+                        loadingState = LoadingState.Success,
+                        uiMessage = UiMessage(textResName = StringResNamePresentation.SUCCESS_LOAD_IN_GALLERY)
+                    )
+                }
+            } catch (_: Exception) {
+                _uiState.update {
+                    it.copy(
+                        loadingState = LoadingState.Error,
+                        uiMessage = UiMessage(textResName = StringResNamePresentation.ERROR_LOAD_IN_GALLERY)
+                    )
+                }
+            }
         }
+    }
+
+    fun clearMessage() {
+        _uiState.update { it.copy(uiMessage = null) }
     }
 
     private fun getSavedProjects() {

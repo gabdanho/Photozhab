@@ -16,17 +16,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -44,8 +44,9 @@ import androidx.compose.ui.graphics.fromColorLong
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.photozhab.R
@@ -61,17 +62,14 @@ import com.example.photozhab.presentation.model.EditorButton
 import com.example.photozhab.presentation.model.PathData
 import com.example.photozhab.presentation.model.PathPoints
 import com.example.photozhab.presentation.model.EditorButtonsProperties
+import com.example.photozhab.presentation.model.LoadingState
 import com.example.photozhab.presentation.model.ToolsStateFunctions
+import com.example.photozhab.presentation.screens.editor.locals.LocalEditorButtonsProperties
+import com.example.photozhab.presentation.screens.editor.locals.LocalToolsStateFunctions
+import com.example.photozhab.presentation.ui.theme.defaultDimensions
 import com.example.photozhab.presentation.utils.saveToBitmap
+import com.example.photozhab.presentation.utils.showUiMessage
 import kotlinx.coroutines.launch
-
-val LocalToolsStateFunctions = compositionLocalOf<ToolsStateFunctions> {
-    error("ToolsStateFunctions must be provide")
-}
-
-val LocalEditorButtonsProperties = compositionLocalOf<EditorButtonsProperties> {
-    error("EditButtonProperties must be provide")
-}
 
 @Composable
 fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenViewModel>()) {
@@ -79,6 +77,7 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
     val lifecycleOwner = LocalLifecycleOwner.current
     val graphicsLayer = rememberGraphicsLayer()
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val buttons = listOf(
         EditorButtonSettings(
@@ -139,6 +138,15 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
 
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    LaunchedEffect(uiState.uiMessage) {
+        uiState.uiMessage?.let {
+            context.showUiMessage(
+                uiMessage = it,
+                clearMessage = { viewModel.clearMessage() }
+            )
         }
     }
 
@@ -211,13 +219,9 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
                         FigureSettingsPanel(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(
-                                    color = Color.LightGray,
-                                    shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
-                                )
+                                .background(color = Color.LightGray)
                         )
                     }
-
                 }
             }
         }
@@ -252,64 +256,76 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
         }
     }
 
-    if (uiState.isShowWarningDialog) {
-        DeleteDataDialog(
-            onDismiss = { viewModel.changeIsShowWarningDialog(value = false) },
-            onAccess = {
-                viewModel.deleteAllFiguresAndClearBackground()
-                viewModel.changeIsShowWarningDialog(value = false)
-            }
-        )
+    when {
+        uiState.isShowWarningDialog -> {
+            DeleteDataDialog(
+                onDismiss = { viewModel.changeIsShowWarningDialog(value = false) },
+                onAccess = {
+                    viewModel.deleteAllFiguresAndClearBackground()
+                    viewModel.changeIsShowWarningDialog(value = false)
+                }
+            )
+        }
+
+        uiState.isShowDeleteSavedProject -> {
+            DeleteDataDialog(
+                onDismiss = {
+                    viewModel.changeIsShowDeleteSavedProject(value = false)
+                    viewModel.changeIsShowSavedProjectsDialog(value = true)
+                },
+                onAccess = {
+                    viewModel.deleteProject()
+                    viewModel.changeIsShowDeleteSavedProject(value = false)
+                    viewModel.changeIsShowSavedProjectsDialog(value = true)
+                }
+            )
+        }
+
+        uiState.isShowSavedProjectsDialog -> {
+            SavedProjectDialog(
+                canvases = uiState.savedProjects,
+                onDismiss = { viewModel.changeIsShowSavedProjectsDialog(value = false) },
+                onSave = {
+                    viewModel.changeIsShowSavedProjectsDialog(value = false)
+                    viewModel.changeIsShowProjectSaverDialog(value = true)
+                },
+                onDelete = { id ->
+                    viewModel.changeSavedProjectIdToDelete(id)
+                    viewModel.changeIsShowSavedProjectsDialog(value = false)
+                    viewModel.changeIsShowDeleteSavedProject(value = true)
+                },
+                onOpen = { id ->
+                    viewModel.getProjectById(id)
+                    viewModel.changeIsShowSavedProjectsDialog(value = false)
+                },
+                modifier = Modifier.fillMaxSize(0.9f)
+            )
+        }
+
+        uiState.isShowProjectSaverDialog -> {
+            ProjectSaverDialog(
+                name = uiState.projectNameValue,
+                onNameChanged = { viewModel.changeProjectNameValue(value = it) },
+                onDismiss = {
+                    viewModel.changeIsShowProjectSaverDialog(value = false)
+                    viewModel.changeIsShowSavedProjectsDialog(value = true)
+                },
+                onSave = {
+                    viewModel.saveProject()
+                    viewModel.changeIsShowProjectSaverDialog(value = false)
+                }
+            )
+        }
     }
 
-    if (uiState.isShowDeleteSavedProject) {
-        DeleteDataDialog(
-            onDismiss = {
-                viewModel.changeIsShowDeleteSavedProject(value = false)
-                viewModel.changeIsShowSavedProjectsDialog(value = true)
-            },
-            onAccess = {
-                viewModel.deleteProject()
-                viewModel.changeIsShowDeleteSavedProject(value = false)
-                viewModel.changeIsShowSavedProjectsDialog(value = true)
-            }
-        )
-    }
-
-    if (uiState.isShowSavedProjectsDialog) {
-        SavedProjectDialog(
-            canvases = uiState.savedProjects,
-            onDismiss = { viewModel.changeIsShowSavedProjectsDialog(value = false) },
-            onSave = {
-                viewModel.changeIsShowSavedProjectsDialog(value = false)
-                viewModel.changeIsShowProjectSaverDialog(value = true)
-            },
-            onDelete = { id ->
-                viewModel.changeSavedProjectIdToDelete(id)
-                viewModel.changeIsShowSavedProjectsDialog(value = false)
-                viewModel.changeIsShowDeleteSavedProject(value = true)
-            },
-            onOpen = { id ->
-                viewModel.getProjectById(id)
-                viewModel.changeIsShowSavedProjectsDialog(value = false)
-            },
-            modifier = Modifier.fillMaxSize(0.9f)
-        )
-    }
-
-    if (uiState.isShowProjectSaverDialog) {
-        ProjectSaverDialog(
-            name = uiState.projectNameValue,
-            onNameChanged = { viewModel.changeProjectNameValue(value = it) },
-            onDismiss = {
-                viewModel.changeIsShowProjectSaverDialog(value = false)
-                viewModel.changeIsShowSavedProjectsDialog(value = true)
-            },
-            onSave = {
-                viewModel.saveProject()
-                viewModel.changeIsShowProjectSaverDialog(value = false)
-            }
-        )
+    if (uiState.loadingState is LoadingState.Loading) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = defaultDimensions.medium)
+            )
+        }
     }
 }
 
@@ -399,36 +415,36 @@ private fun StateFigures(modifier: Modifier = Modifier) {
             IconButton(onClick = toolsStateFunctions.onPrevStateClick) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Previous state"
+                    contentDescription = stringResource(R.string.content_previous_state)
                 )
             }
             IconButton(onClick = toolsStateFunctions.onForwardStateClick) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                    contentDescription = "Forward state"
+                    contentDescription = stringResource(R.string.content_forward_state)
                 )
             }
         }
         Row {
             IconButton(onClick = toolsStateFunctions.onSaveToGalleryClick) {
                 Icon(
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(defaultDimensions.iconButtonSize),
                     painter = painterResource(R.drawable.gallery_save),
-                    contentDescription = "Save to gallery"
+                    contentDescription = stringResource(R.string.content_save_to_gallery)
                 )
             }
             IconButton(onClick = toolsStateFunctions.onSavesClick) {
                 Icon(
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(defaultDimensions.iconButtonSize),
                     painter = painterResource(R.drawable.diskette),
-                    contentDescription = "Saves"
+                    contentDescription = stringResource(R.string.content_saves)
                 )
             }
             IconButton(onClick = toolsStateFunctions.onDeleteAllClick) {
                 Icon(
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(defaultDimensions.iconButtonSize),
                     painter = painterResource(R.drawable.trash),
-                    contentDescription = "Delete all"
+                    contentDescription = stringResource(R.string.content_delete_all)
                 )
             }
         }
@@ -496,12 +512,16 @@ private fun BrushEditor(modifier: Modifier = Modifier) {
         ColorPicker(
             currentColor = buttonsProperties.brushColor,
             changeColor = buttonsProperties.changeBrushColor,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(defaultDimensions.verySmall)
         )
         WidthPicker(
             currentWidth = buttonsProperties.brushWidth,
             changeWidth = buttonsProperties.changeBrushWidth,
-            modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
+            modifier = Modifier.padding(
+                bottom = defaultDimensions.verySmall,
+                end = defaultDimensions.medium,
+                start = defaultDimensions.medium
+            )
         )
     }
 }
@@ -514,7 +534,7 @@ private fun CircleEditor(modifier: Modifier = Modifier) {
         ColorPicker(
             currentColor = buttonsProperties.circleColor,
             changeColor = buttonsProperties.changeCircleColor,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(defaultDimensions.verySmall)
         )
     }
 }
@@ -527,7 +547,7 @@ private fun SquareEditor(modifier: Modifier = Modifier) {
         ColorPicker(
             currentColor = buttonsProperties.squareColor,
             changeColor = buttonsProperties.changeSquareColor,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(defaultDimensions.verySmall)
         )
     }
 }
@@ -540,7 +560,7 @@ private fun TriangleEditor(modifier: Modifier = Modifier) {
         ColorPicker(
             currentColor = buttonsProperties.triangleColor,
             changeColor = buttonsProperties.changeTriangleColor,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(defaultDimensions.verySmall)
         )
     }
 }
@@ -553,12 +573,16 @@ private fun PolygonEditor(modifier: Modifier = Modifier) {
         ColorPicker(
             currentColor = buttonsProperties.polygonColor,
             changeColor = buttonsProperties.changePolygonColor,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(defaultDimensions.verySmall)
         )
         VerticesPicker(
             currentVertices = buttonsProperties.polygonVertices,
             changeVertices = buttonsProperties.changePolygonVertices,
-            modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
+            modifier = Modifier.padding(
+                bottom = defaultDimensions.small,
+                end = defaultDimensions.medium,
+                start = defaultDimensions.medium
+            )
         )
     }
 }
@@ -571,25 +595,29 @@ private fun BackgroundEditor(modifier: Modifier = Modifier) {
         ColorPicker(
             currentColor = buttonsProperties.backgroundColor,
             changeColor = buttonsProperties.changeBackgroundColor,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(defaultDimensions.verySmall)
         )
     }
 }
 
 @Composable
-fun LineEditor(modifier: Modifier = Modifier) {
+private fun LineEditor(modifier: Modifier = Modifier) {
     val buttonsProperties = LocalEditorButtonsProperties.current
 
     Column(modifier = modifier) {
         ColorPicker(
             currentColor = buttonsProperties.lineColor,
             changeColor = buttonsProperties.changeLineColor,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(defaultDimensions.verySmall)
         )
         WidthPicker(
             currentWidth = buttonsProperties.lineWidth,
             changeWidth = buttonsProperties.changeLineWidth,
-            modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
+            modifier = Modifier.padding(
+                bottom = defaultDimensions.small,
+                end = defaultDimensions.medium,
+                start = defaultDimensions.medium
+            )
         )
     }
 }
@@ -599,7 +627,7 @@ private fun EditorButtonItem(
     button: EditorButtonSettings,
     isBrushChosen: Boolean,
     isEnabled: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val toolsStateFunctions = LocalToolsStateFunctions.current
 
@@ -616,13 +644,13 @@ private fun EditorButtonItem(
                     }
                 )
             }
-            .padding(16.dp)
+            .padding(defaultDimensions.medium)
     ) {
         Icon(
             painter = painterResource(button.icon),
             contentDescription = button.type.toString(),
             tint = if (isEnabled) Color.Unspecified else Color.Gray,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(defaultDimensions.iconButtonSize)
         )
     }
 }

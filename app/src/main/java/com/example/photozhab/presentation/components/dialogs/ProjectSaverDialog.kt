@@ -11,8 +11,10 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.Dialog
+import com.example.photozhab.R
+import com.example.photozhab.presentation.ui.theme.defaultDimensions
 
 @Composable
 fun ProjectSaverDialog(
@@ -25,12 +27,12 @@ fun ProjectSaverDialog(
     Dialog(onDismissRequest = onDismiss) {
         Card(modifier = modifier) {
             Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(defaultDimensions.small),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(defaultDimensions.medium)
             ) {
                 Text(
-                    text = "Enter the project name"
+                    text = stringResource(R.string.text_enter_the_name)
                 )
                 TextField(
                     value = name,
@@ -41,7 +43,7 @@ fun ProjectSaverDialog(
                     onClick = { onSave() },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = "Save")
+                    Text(text = stringResource(R.string.button_save))
                 }
             }
         }

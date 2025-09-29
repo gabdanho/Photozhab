@@ -17,10 +17,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.example.photozhab.R
 import com.example.photozhab.presentation.model.CanvasInfo
+import com.example.photozhab.presentation.ui.theme.defaultDimensions
 
 @Composable
 fun SavedProjectDialog(
@@ -34,13 +36,13 @@ fun SavedProjectDialog(
     Dialog(onDismissRequest = onDismiss) {
         Card(modifier = modifier) {
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(defaultDimensions.verySmall),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(defaultDimensions.medium)
             ) {
                 item {
                     Text(
-                        text = "Saved projects",
+                        text = stringResource(R.string.text_saved_projects),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -57,7 +59,7 @@ fun SavedProjectDialog(
                 } else {
                     item {
                         Text(
-                            text = "There are no saved projects",
+                            text = stringResource(R.string.text_there_are_no_saved_projects),
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -67,7 +69,7 @@ fun SavedProjectDialog(
                     Button(
                         onClick = { onSave() }
                     ) {
-                        Text(text = "Save this project")
+                        Text(text = stringResource(R.string.text_save_this_project))
                     }
                 }
             }
@@ -95,14 +97,17 @@ private fun SaveInfo(
             Text(
                 text = canvasInfo.name,
                 maxLines = 1,
-                modifier = Modifier.fillMaxWidth(0.7f)
+                modifier = Modifier.fillMaxWidth(defaultDimensions.widthDialogWeight)
             )
             IconButton(
                 onClick = { onDelete(canvasInfo.id) }
             ) {
                 Icon(
                     imageVector = Icons.Default.RestoreFromTrash,
-                    contentDescription = "Delete canvas: ${canvasInfo.name}"
+                    contentDescription = stringResource(
+                        R.string.text_delete_canvas,
+                        canvasInfo.name
+                    )
                 )
             }
         }

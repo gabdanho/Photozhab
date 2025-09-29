@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.Environment
 import android.provider.MediaStore
+import java.io.IOException
 
 object MediaStoreSaver {
 
@@ -23,16 +24,20 @@ object MediaStoreSaver {
         val resolver = context.contentResolver
         val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
 
-        uri?.let {
-            resolver.openOutputStream(it).use { outputStream ->
-                outputStream?.let {
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        try {
+            uri?.let {
+                resolver.openOutputStream(it).use { outputStream ->
+                    outputStream?.let {
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                    }
                 }
-            }
 
-            values.clear()
-            values.put(MediaStore.Images.Media.IS_PENDING, 0)
-            resolver.update(uri, values, null, null)
+                values.clear()
+                values.put(MediaStore.Images.Media.IS_PENDING, 0)
+                resolver.update(uri, values, null, null)
+            }
+        } catch (e: Exception) {
+            throw IOException(e.message)
         }
     }
 }

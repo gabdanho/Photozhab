@@ -19,7 +19,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toColorLong
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.photozhab.R
+import com.example.photozhab.presentation.ui.theme.defaultDimensions
 
 @Composable
 fun ColorPicker(
@@ -46,20 +48,19 @@ fun ColorPicker(
         modifier = modifier
     ) {
         Text(
-            text = "Цвет",
-            modifier = Modifier.padding(bottom = 4.dp)
+            text = stringResource(R.string.text_color),
+            modifier = Modifier.padding(bottom = defaultDimensions.ultraSmall)
         )
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 10.dp)
-                .height(40.dp)
+                .padding(horizontal = defaultDimensions.small)
+                .height(defaultDimensions.colorBox)
                 .background(color, shape = MaterialTheme.shapes.large)
         )
 
-        // Sliders for adjusting RGBA values
         Column(
-            modifier = Modifier.padding(12.dp)
+            modifier = Modifier.padding(defaultDimensions.small)
         ) {
             ColorSlider("R", red, Color.Red)
             ColorSlider("G", green, Color.Green)

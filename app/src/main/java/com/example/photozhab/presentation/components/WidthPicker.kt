@@ -3,7 +3,6 @@ package com.example.photozhab.presentation.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -15,8 +14,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import com.example.photozhab.R
 
 @Composable
 fun WidthPicker(
@@ -36,10 +36,10 @@ fun WidthPicker(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        Text("Ширина линии")
+        Text(stringResource(R.string.text_line_width))
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Slider(
                 value = width,
@@ -52,7 +52,6 @@ fun WidthPicker(
             )
             Text(
                 text = resultWidth.toInt().toString(),
-                modifier = Modifier.width(25.dp),
                 textAlign = TextAlign.End,
                 style = MaterialTheme.typography.bodySmall
             )

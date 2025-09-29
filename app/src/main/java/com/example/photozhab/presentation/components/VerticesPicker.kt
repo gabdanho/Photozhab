@@ -3,7 +3,6 @@ package com.example.photozhab.presentation.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -16,8 +15,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import com.example.photozhab.R
+import com.example.photozhab.presentation.ui.theme.defaultDimensions
 
 @Composable
 fun VerticesPicker(
@@ -38,10 +39,10 @@ fun VerticesPicker(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        Text("Углы")
+        Text(stringResource(R.string.text_vertices))
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Slider(
                 value = vertices,
@@ -49,13 +50,12 @@ fun VerticesPicker(
                     vertices = it
                     verticesResult = (vertices * 100).toInt()
                 },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(defaultDimensions.fullWeight),
                 steps = steps,
                 valueRange = range
             )
             Text(
                 text = verticesResult.toString(),
-                modifier = Modifier.width(25.dp),
                 textAlign = TextAlign.End,
                 style = MaterialTheme.typography.bodySmall
             )

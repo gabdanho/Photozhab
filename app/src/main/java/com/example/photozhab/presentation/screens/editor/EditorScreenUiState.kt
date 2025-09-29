@@ -5,6 +5,8 @@ import androidx.compose.ui.graphics.toColorLong
 import com.example.photozhab.presentation.model.CanvasInfo
 import com.example.photozhab.presentation.model.EditorButton
 import com.example.photozhab.presentation.model.Figure
+import com.example.photozhab.presentation.model.LoadingState
+import com.example.photozhab.presentation.model.UiMessage
 
 data class EditorScreenUiState(
     val figures: List<Figure> = emptyList(),
@@ -32,4 +34,7 @@ data class EditorScreenUiState(
     val isShowSavedProjectsDialog: Boolean = false,
     val isShowProjectSaverDialog: Boolean = false,
     val isShowDeleteSavedProject: Boolean = false,
+
+    val loadingState: LoadingState = LoadingState.Success,
+    val uiMessage: UiMessage? = null,
 )
