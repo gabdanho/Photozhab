@@ -1,14 +1,12 @@
 package com.example.photozhab.presentation.screens.editor
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
 import com.example.photozhab.presentation.model.CanvasInfo
 import com.example.photozhab.presentation.model.EditorButton
 import com.example.photozhab.presentation.model.Figure
 
 data class EditorScreenUiState(
-    val figures: SnapshotStateList<Figure> = mutableStateListOf(),
+    val figures: List<Figure> = emptyList(),
     val circleColor: Color = Color.Green,
     val squareColor: Color = Color.Blue,
     val brushColor: Color = Color.Red,

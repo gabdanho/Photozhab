@@ -1,8 +1,6 @@
 package com.example.photozhab.presentation.screens.editor
 
 import android.graphics.Bitmap
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
@@ -41,27 +39,28 @@ class EditorScreenViewModel @Inject constructor(
     private val deletedFigures = mutableListOf<Figure>()
 
     fun addFigure(figure: Figure) {
-        _uiState.value.figures.add(figure)
+        _uiState.update { it.copy(figures = it.figures + figure) }
         deletedFigures.clear()
     }
 
-    @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
     fun prevState() {
-        if (_uiState.value.figures.isNotEmpty()) {
-            val prevFigure = _uiState.value.figures.removeLast()
+        val currentFigures = _uiState.value.figures
+        if (currentFigures.isNotEmpty()) {
+            val prevFigure = currentFigures.last()
             deletedFigures.add(prevFigure)
+            _uiState.update { it.copy(figures = currentFigures.dropLast(1)) }
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
     fun forwardState() {
         if (deletedFigures.isNotEmpty()) {
-            _uiState.value.figures.add(deletedFigures.removeLast())
+            val forwardFigure = deletedFigures.removeAt(deletedFigures.lastIndex)
+            _uiState.update { it.copy(figures = it.figures + forwardFigure) }
         }
     }
 
     fun deleteAllFiguresAndClearBackground() {
-        _uiState.value.figures.clear()
+        _uiState.update { it.copy(figures = emptyList()) }
         deletedFigures.clear()
         _uiState.update { state -> state.copy(backgroundColor = Color.Black) }
     }
