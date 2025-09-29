@@ -1,5 +1,6 @@
 package com.example.photozhab.presentation.screens.editor
 
+import android.graphics.Bitmap
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.toMutableStateList
@@ -7,6 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.photozhab.domain.interfaces.repository.local.CanvasRepository
+import com.example.photozhab.domain.interfaces.repository.local.GalleryRepository
 import com.example.photozhab.presentation.mappers.figures.toDomainLayer
 import com.example.photozhab.presentation.mappers.figures.toPresentationLayer
 import com.example.photozhab.presentation.mappers.toPresentationLayer
@@ -25,6 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditorScreenViewModel @Inject constructor(
     private val canvasRepository: CanvasRepository,
+    private val galleryRepository: GalleryRepository,
 ) : ViewModel() {
 
     init {
@@ -139,6 +142,25 @@ class EditorScreenViewModel @Inject constructor(
                     )
                 }
             }
+            deletedFigures.clear()
+        }
+    }
+
+    fun saveTempCanvas() {
+        runBlocking {
+            val state = _uiState.value
+
+            val currentCanvas = CanvasSave(
+                figures = state.figures,
+                backgroundColor = state.backgroundColor
+            ).toDomainLayer()
+            canvasRepository.saveTempCanvas(currentCanvas)
+        }
+    }
+
+    fun saveToGallery(bitmap: Bitmap) {
+        viewModelScope.launch {
+            galleryRepository.saveProjectInGallery(bitmap = bitmap)
         }
     }
 
@@ -160,18 +182,7 @@ class EditorScreenViewModel @Inject constructor(
                     )
                 }
             }
-        }
-    }
-
-    fun saveTempCanvas() {
-        runBlocking {
-            val state = _uiState.value
-
-            val currentCanvas = CanvasSave(
-                figures = state.figures,
-                backgroundColor = state.backgroundColor
-            ).toDomainLayer()
-            canvasRepository.saveTempCanvas(currentCanvas)
+            deletedFigures.clear()
         }
     }
 

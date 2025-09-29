@@ -30,14 +30,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.layer.drawLayer
+import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -55,12 +59,17 @@ import com.example.photozhab.presentation.model.Figure
 import com.example.photozhab.presentation.model.EditorButton
 import com.example.photozhab.presentation.model.PathData
 import com.example.photozhab.presentation.model.PathPoints
+import com.example.photozhab.presentation.utils.saveToBitmap
+import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenViewModel>()) {
     val uiState by viewModel.uiState.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val graphicsLayer = rememberGraphicsLayer()
+    val coroutineScope = rememberCoroutineScope()
+
     val buttons = listOf(
         EditorButtonSettings(
             icon = R.drawable.brush,
@@ -131,6 +140,12 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
+                .drawWithContent {
+                    graphicsLayer.record {
+                        this@drawWithContent.drawContent()
+                    }
+                    drawLayer(graphicsLayer)
+                }
                 .fillMaxSize()
                 .weight(1f)
                 .clipToBounds()
@@ -195,7 +210,12 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
             onDeleteAllClick = { viewModel.changeIsShowWarningDialog(value = true) },
             changeCurrentEditorButton = { viewModel.changeCurrentEditorButton(editorButton = it) },
             changeIsPanelExpanded = { viewModel.changeIsPanelExpanded(value = it) },
-            onSavesClick = { viewModel.changeIsShowSavedProjectsDialog(value = true) }
+            onSavesClick = { viewModel.changeIsShowSavedProjectsDialog(value = true) },
+            onSaveToGalleryClick = {
+                coroutineScope.launch {
+                    viewModel.saveToGallery(bitmap = graphicsLayer.saveToBitmap())
+                }
+            }
         )
     }
 
@@ -322,6 +342,7 @@ private fun DrawingCanvas(
 private fun ToolPanel(
     buttons: List<EditorButtonSettings>,
     isBrushChosen: Boolean,
+    onSaveToGalleryClick: () -> Unit,
     onSavesClick: () -> Unit,
     onPrevStateClick: () -> Unit,
     onForwardStateClick: () -> Unit,
@@ -337,6 +358,7 @@ private fun ToolPanel(
             onDeleteAllClick = onDeleteAllClick,
             onPanelClick = { changeCurrentEditorButton(null) },
             onSavesClick = { onSavesClick() },
+            onSaveToGalleryClick = { onSaveToGalleryClick() },
             modifier = Modifier.fillMaxWidth()
         )
         ButtonsPanel(
@@ -361,6 +383,7 @@ private fun StateFigures(
     onForwardStateClick: () -> Unit,
     onDeleteAllClick: () -> Unit,
     onSavesClick: () -> Unit,
+    onSaveToGalleryClick: () -> Unit,
     modifier: Modifier = Modifier,
     onPanelClick: () -> Unit = {},
 ) {
@@ -384,6 +407,13 @@ private fun StateFigures(
             }
         }
         Row {
+            IconButton(onClick = onSaveToGalleryClick) {
+                Icon(
+                    modifier = Modifier.size(20.dp),
+                    painter = painterResource(R.drawable.gallery_save),
+                    contentDescription = "Save to gallery"
+                )
+            }
             IconButton(onClick = onSavesClick) {
                 Icon(
                     modifier = Modifier.size(20.dp),
