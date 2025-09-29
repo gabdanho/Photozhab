@@ -61,7 +61,7 @@ class EditorScreenViewModel @Inject constructor(
     fun deleteAllFiguresAndClearBackground() {
         _uiState.update { it.copy(figures = emptyList()) }
         deletedFigures.clear()
-        _uiState.update { state -> state.copy(backgroundColor = 0xFF000000) }
+        _uiState.update { state -> state.copy(backgroundColor = DEFAULT_BACKGROUND_COLOR) }
     }
 
     fun changeProjectNameValue(value: String) =
@@ -187,5 +187,9 @@ class EditorScreenViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         saveTempCanvas()
+    }
+
+    companion object {
+        private const val DEFAULT_BACKGROUND_COLOR: Long = -72057594037927936L
     }
 }
