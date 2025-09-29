@@ -33,7 +33,7 @@ fun ColorPicker(
 
     val color by remember {
         derivedStateOf {
-            Color(red.value, green.value, blue.value)
+            Color(red.floatValue, green.floatValue, blue.floatValue)
         }
     }
 

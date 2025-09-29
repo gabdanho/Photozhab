@@ -10,7 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -23,9 +24,11 @@ fun VerticesPicker(
     currentVertices: Int,
     changeVertices: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    steps: Int = 47,
+    range: ClosedFloatingPointRange<Float> = 0.03f..0.5f
 ) {
-    var vertices by remember { mutableStateOf(currentVertices.toFloat() / 100) }
-    var verticesResult by remember { mutableStateOf(currentVertices) }
+    var vertices by remember { mutableFloatStateOf(currentVertices.toFloat() / 100) }
+    var verticesResult by remember { mutableIntStateOf(currentVertices) }
 
     LaunchedEffect(verticesResult) {
         changeVertices(verticesResult)
@@ -47,8 +50,8 @@ fun VerticesPicker(
                     verticesResult = (vertices * 100).toInt()
                 },
                 modifier = Modifier.weight(1f),
-                steps = 47,
-                valueRange = 0.03f..0.5f
+                steps = steps,
+                valueRange = range
             )
             Text(
                 text = verticesResult.toString(),

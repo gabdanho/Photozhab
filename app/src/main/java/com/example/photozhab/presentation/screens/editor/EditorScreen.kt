@@ -441,8 +441,6 @@ private fun ButtonsPanel(
     buttons: List<EditorButtonSettings>,
     modifier: Modifier = Modifier,
 ) {
-    val toolsStateFunctions = LocalToolsStateFunctions.current
-
     LazyRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.Center,
@@ -451,28 +449,11 @@ private fun ButtonsPanel(
         items(buttons) { button ->
             val isEnabled = button.type == EditorButton.BRUSH || !isBrushChosen
 
-            Box(
-                modifier = Modifier
-                    .background(if (isBrushChosen && button.type == EditorButton.BRUSH) Color.LightGray else Color.Unspecified)
-                    .pointerInput(isEnabled) {
-                        detectTapGestures(
-                            onTap = { if (isEnabled) toolsStateFunctions.onButtonClick(button) },
-                            onLongPress = {
-                                if (isEnabled) toolsStateFunctions.onLongPressButton(
-                                    button
-                                )
-                            }
-                        )
-                    }
-                    .padding(16.dp)
-            ) {
-                Icon(
-                    painter = painterResource(button.icon),
-                    contentDescription = button.type.toString(),
-                    tint = if (isEnabled) Color.Unspecified else Color.Gray,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
+            EditorButtonItem(
+                button = button,
+                isBrushChosen = isBrushChosen,
+                isEnabled = isEnabled
+            )
         }
     }
 }
@@ -487,93 +468,161 @@ private fun FigureSettingsPanel(modifier: Modifier = Modifier) {
     ) {
         Column {
             when (buttonsProperties.pressedCurrentEditorButton) {
-                EditorButton.BRUSH -> {
-                    Column {
-                        ColorPicker(
-                            currentColor = buttonsProperties.brushColor,
-                            changeColor = buttonsProperties.changeBrushColor,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                        WidthPicker(
-                            currentWidth = buttonsProperties.brushWidth,
-                            changeWidth = buttonsProperties.changeBrushWidth,
-                            modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
-                        )
-                    }
-                }
+                EditorButton.BRUSH -> BrushEditor()
 
-                EditorButton.CIRCLE -> {
-                    Column {
-                        ColorPicker(
-                            currentColor = buttonsProperties.circleColor,
-                            changeColor = buttonsProperties.changeCircleColor,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
-                }
+                EditorButton.CIRCLE -> CircleEditor()
 
-                EditorButton.SQUARE -> {
-                    Column {
-                        ColorPicker(
-                            currentColor = buttonsProperties.squareColor,
-                            changeColor = buttonsProperties.changeSquareColor,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
-                }
+                EditorButton.SQUARE -> SquareEditor()
 
-                EditorButton.TRIANGLE -> {
-                    Column {
-                        ColorPicker(
-                            currentColor = buttonsProperties.triangleColor,
-                            changeColor = buttonsProperties.changeTriangleColor,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
-                }
+                EditorButton.TRIANGLE -> TriangleEditor()
 
-                EditorButton.POLYGON -> {
-                    Column {
-                        ColorPicker(
-                            currentColor = buttonsProperties.polygonColor,
-                            changeColor = buttonsProperties.changePolygonColor,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                        VerticesPicker(
-                            currentVertices = buttonsProperties.polygonVertices,
-                            changeVertices = buttonsProperties.changePolygonVertices,
-                            modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
-                        )
-                    }
-                }
+                EditorButton.POLYGON -> PolygonEditor()
 
-                EditorButton.LINE -> {
-                    Column {
-                        ColorPicker(
-                            currentColor = buttonsProperties.lineColor,
-                            changeColor = buttonsProperties.changeLineColor,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                        WidthPicker(
-                            currentWidth = buttonsProperties.lineWidth,
-                            changeWidth = buttonsProperties.changeLineWidth,
-                            modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
-                        )
-                    }
-                }
+                EditorButton.LINE -> LineEditor()
 
-                EditorButton.BACKGROUND -> {
-                    Column {
-                        ColorPicker(
-                            currentColor = buttonsProperties.backgroundColor,
-                            changeColor = buttonsProperties.changeBackgroundColor,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
-                }
+                EditorButton.BACKGROUND -> BackgroundEditor()
 
                 null -> Unit
             }
         }
+    }
+}
+
+@Composable
+private fun BrushEditor(modifier: Modifier = Modifier) {
+    val buttonsProperties = LocalEditorButtonsProperties.current
+
+    Column(modifier = modifier) {
+        ColorPicker(
+            currentColor = buttonsProperties.brushColor,
+            changeColor = buttonsProperties.changeBrushColor,
+            modifier = Modifier.padding(8.dp)
+        )
+        WidthPicker(
+            currentWidth = buttonsProperties.brushWidth,
+            changeWidth = buttonsProperties.changeBrushWidth,
+            modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
+        )
+    }
+}
+
+@Composable
+private fun CircleEditor(modifier: Modifier = Modifier) {
+    val buttonsProperties = LocalEditorButtonsProperties.current
+
+    Column(modifier = modifier) {
+        ColorPicker(
+            currentColor = buttonsProperties.circleColor,
+            changeColor = buttonsProperties.changeCircleColor,
+            modifier = Modifier.padding(8.dp)
+        )
+    }
+}
+
+@Composable
+private fun SquareEditor(modifier: Modifier = Modifier) {
+    val buttonsProperties = LocalEditorButtonsProperties.current
+
+    Column(modifier = modifier) {
+        ColorPicker(
+            currentColor = buttonsProperties.squareColor,
+            changeColor = buttonsProperties.changeSquareColor,
+            modifier = Modifier.padding(8.dp)
+        )
+    }
+}
+
+@Composable
+private fun TriangleEditor(modifier: Modifier = Modifier) {
+    val buttonsProperties = LocalEditorButtonsProperties.current
+
+    Column(modifier = modifier) {
+        ColorPicker(
+            currentColor = buttonsProperties.triangleColor,
+            changeColor = buttonsProperties.changeTriangleColor,
+            modifier = Modifier.padding(8.dp)
+        )
+    }
+}
+
+@Composable
+private fun PolygonEditor(modifier: Modifier = Modifier) {
+    val buttonsProperties = LocalEditorButtonsProperties.current
+
+    Column(modifier = modifier) {
+        ColorPicker(
+            currentColor = buttonsProperties.polygonColor,
+            changeColor = buttonsProperties.changePolygonColor,
+            modifier = Modifier.padding(8.dp)
+        )
+        VerticesPicker(
+            currentVertices = buttonsProperties.polygonVertices,
+            changeVertices = buttonsProperties.changePolygonVertices,
+            modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
+        )
+    }
+}
+
+@Composable
+private fun BackgroundEditor(modifier: Modifier = Modifier) {
+    val buttonsProperties = LocalEditorButtonsProperties.current
+
+    Column(modifier = modifier) {
+        ColorPicker(
+            currentColor = buttonsProperties.backgroundColor,
+            changeColor = buttonsProperties.changeBackgroundColor,
+            modifier = Modifier.padding(8.dp)
+        )
+    }
+}
+
+@Composable
+fun LineEditor(modifier: Modifier = Modifier) {
+    val buttonsProperties = LocalEditorButtonsProperties.current
+
+    Column(modifier = modifier) {
+        ColorPicker(
+            currentColor = buttonsProperties.lineColor,
+            changeColor = buttonsProperties.changeLineColor,
+            modifier = Modifier.padding(8.dp)
+        )
+        WidthPicker(
+            currentWidth = buttonsProperties.lineWidth,
+            changeWidth = buttonsProperties.changeLineWidth,
+            modifier = Modifier.padding(bottom = 12.dp, end = 16.dp, start = 16.dp)
+        )
+    }
+}
+
+@Composable
+private fun EditorButtonItem(
+    button: EditorButtonSettings,
+    isBrushChosen: Boolean,
+    isEnabled: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val toolsStateFunctions = LocalToolsStateFunctions.current
+
+    Box(
+        modifier = modifier
+            .background(if (isBrushChosen && button.type == EditorButton.BRUSH) Color.LightGray else Color.Unspecified)
+            .pointerInput(isEnabled) {
+                detectTapGestures(
+                    onTap = { if (isEnabled) toolsStateFunctions.onButtonClick(button) },
+                    onLongPress = {
+                        if (isEnabled) toolsStateFunctions.onLongPressButton(
+                            button
+                        )
+                    }
+                )
+            }
+            .padding(16.dp)
+    ) {
+        Icon(
+            painter = painterResource(button.icon),
+            contentDescription = button.type.toString(),
+            tint = if (isEnabled) Color.Unspecified else Color.Gray,
+            modifier = Modifier.size(20.dp)
+        )
     }
 }

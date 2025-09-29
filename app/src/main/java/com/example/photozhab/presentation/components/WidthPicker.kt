@@ -10,7 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -23,9 +23,10 @@ fun WidthPicker(
     currentWidth: Float,
     changeWidth: (Float) -> Unit,
     modifier: Modifier = Modifier,
+    steps: Int = 100,
 ) {
-    var width by remember { mutableStateOf(currentWidth / 100) }
-    var resultWidth by remember { mutableStateOf(currentWidth) }
+    var width by remember { mutableFloatStateOf(currentWidth / 100) }
+    var resultWidth by remember { mutableFloatStateOf(currentWidth) }
 
     LaunchedEffect(resultWidth) {
         changeWidth(resultWidth)
@@ -47,7 +48,7 @@ fun WidthPicker(
                     resultWidth = (width * 100)
                 },
                 modifier = Modifier.weight(1f),
-                steps = 100
+                steps = steps
             )
             Text(
                 text = resultWidth.toInt().toString(),
