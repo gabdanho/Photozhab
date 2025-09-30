@@ -8,6 +8,12 @@ import com.example.photozhab.domain.model.canvas.Offset as OffsetDomain
 import com.example.photozhab.domain.model.canvas.Figure.Square as SquareDomain
 import com.example.photozhab.presentation.model.Figure.Square
 
+/**
+ * [SquareDomain] -> [Square]
+ *
+ * @receiver [SquareDomain].
+ * @return [Square].
+ */
 fun SquareDomain.toPresentationLayer(): Square {
     return Square(
         color = Color.fromColorLong(color),
@@ -17,6 +23,12 @@ fun SquareDomain.toPresentationLayer(): Square {
     )
 }
 
+/**
+ * [Square] -> [SquareDomain]
+ *
+ * @receiver [Square].
+ * @return [SquareDomain].
+ */
 fun Square.toDomainLayer(): SquareDomain {
     return SquareDomain(
         color = color.toColorLong(),

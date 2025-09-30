@@ -7,6 +7,14 @@ import com.example.photozhab.data.local.converters.FiguresConverter
 import com.example.photozhab.data.local.entity.Canvas.Companion.TABLE_CANVAS
 import com.example.photozhab.data.local.model.Figure
 
+/**
+ * Сущность Canvas для Room.
+ *
+ * @param id Идентификатор Canvas.
+ * @param name Название Canvas.
+ * @param figures Список фигур на Canvas.
+ * @param background Цвет фона Canvas в формате Long.
+ */
 @Entity(tableName = TABLE_CANVAS)
 @TypeConverters(FiguresConverter::class)
 data class Canvas(

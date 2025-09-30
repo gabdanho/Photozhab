@@ -15,6 +15,14 @@ import androidx.compose.ui.text.style.TextAlign
 import com.example.photozhab.presentation.ui.theme.defaultDimensions
 import com.example.photozhab.presentation.utils.toColorInt
 
+/**
+ * Слайдер для изменения одного из компонентов цвета (R, G, B).
+ *
+ * @param label Метка компонента цвета.
+ * @param valueState Состояние компонента цвета.
+ * @param color Цвет слайдера.
+ * @param modifier Модификатор для внешнего контейнера.
+ */
 @Composable
 fun ColorSlider(
     label: String,

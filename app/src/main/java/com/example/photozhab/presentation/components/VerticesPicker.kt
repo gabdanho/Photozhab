@@ -20,6 +20,15 @@ import androidx.compose.ui.text.style.TextAlign
 import com.example.photozhab.R
 import com.example.photozhab.presentation.ui.theme.defaultDimensions
 
+/**
+ * Слайдер для выбора количества вершин многоугольника.
+ *
+ * @param currentVertices Текущее количество вершин.
+ * @param changeVertices Событие при изменении количества вершин.
+ * @param modifier Модификатор для внешнего контейнера.
+ * @param steps Количество шагов слайдера.
+ * @param range Диапазон значений слайдера.
+ */
 @Composable
 fun VerticesPicker(
     currentVertices: Int,

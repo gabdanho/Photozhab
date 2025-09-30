@@ -30,13 +30,24 @@ import androidx.graphics.shapes.toPath
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
+/**
+ * Базовый класс для всех фигур.
+ */
 sealed class Figure {
 
+    /** Отрисовка фигуры. */
     @Composable
     open fun DrawFigure() {}
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Кисть с произвольным путем.
+     *
+     * @param color Цвет кисти.
+     * @param brushWidth Толщина кисти.
+     * @param path Путь кисти.
+     */
     data class Brush(
         val color: Color,
         val brushWidth: Float,
@@ -55,6 +66,14 @@ sealed class Figure {
         }
     }
 
+    /**
+     * Круг с трансформациями (смещение, поворот, масштаб).
+     *
+     * @param color Цвет круга.
+     * @param offset Смещение круга.
+     * @param angle Угол поворота.
+     * @param scale Масштаб.
+     */
     data class Circle(
         val color: Color,
         var offset: Offset = Offset.Companion.Zero,
@@ -104,6 +123,15 @@ sealed class Figure {
         }
     }
 
+    /**
+     * Линия с трансформациями.
+     *
+     * @param color Цвет линии.
+     * @param lineWidth Толщина линии.
+     * @param offset Смещение линии.
+     * @param angle Угол поворота линии.
+     * @param widthDp Длина линии.
+     */
     data class Line(
         val color: Color,
         val lineWidth: Float,
@@ -161,6 +189,15 @@ sealed class Figure {
         }
     }
 
+    /**
+     * Многоугольник с трансформациями.
+     *
+     * @param color Цвет многоугольника.
+     * @param vertices Количество вершин.
+     * @param offset Смещение.
+     * @param angle Угол поворота.
+     * @param scale Масштаб.
+     */
     data class Polygon(
         val color: Color,
         val vertices: Int,
@@ -217,6 +254,14 @@ sealed class Figure {
         }
     }
 
+    /**
+     * Квадрат с трансформациями.
+     *
+     * @param color Цвет квадрата.
+     * @param offset Смещение.
+     * @param angle Угол поворота.
+     * @param scale Масштаб.
+     */
     data class Square(
         val color: Color,
         var offset: Offset = Offset.Companion.Zero,
@@ -267,6 +312,14 @@ sealed class Figure {
         }
     }
 
+    /**
+     * Треугольник с трансформациями.
+     *
+     * @param color Цвет треугольника.
+     * @param offset Смещение.
+     * @param angle Угол поворота.
+     * @param scale Масштаб.
+     */
     data class Triangle(
         val color: Color,
         var offset: Offset = Offset.Companion.Zero,

@@ -23,6 +23,13 @@ import androidx.compose.ui.res.stringResource
 import com.example.photozhab.R
 import com.example.photozhab.presentation.ui.theme.defaultDimensions
 
+/**
+ * Выбор цвета с RGB-слайдерами.
+ *
+ * @param currentColor Текущий выбранный цвет.
+ * @param changeColor Событие при изменении цвета, возвращает цвет в формате Long.
+ * @param modifier Модификатор для внешнего контейнера.
+ */
 @Composable
 fun ColorPicker(
     currentColor: Color,

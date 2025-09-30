@@ -7,8 +7,18 @@ import android.os.Environment
 import android.provider.MediaStore
 import java.io.IOException
 
+/**
+ * Утилитный объект для сохранения Bitmap изображений в галерею устройства.
+ */
 object MediaStoreSaver {
 
+    /**
+     * Сохраняет Bitmap в папку "Photozhab" в галерее.
+     *
+     * @param bitmap Bitmap изображение для сохранения.
+     * @param resolver ContentResolver для доступа к хранилищу.
+     * @throws IOException если произошла ошибка при сохранении.
+     */
     fun saveBitmapToGallery(bitmap: Bitmap, resolver: ContentResolver) {
         val fileName = "photozhab_${System.currentTimeMillis()}.png"
         val mimeType = "image/png"

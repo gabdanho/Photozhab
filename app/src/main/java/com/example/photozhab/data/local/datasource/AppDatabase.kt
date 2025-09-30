@@ -7,6 +7,9 @@ import androidx.room.RoomDatabase
 import com.example.photozhab.data.local.dao.CanvasDao
 import com.example.photozhab.data.local.entity.Canvas
 
+/**
+ * Основная база данных приложения.
+ */
 @Database(entities = [Canvas::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
 

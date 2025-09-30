@@ -3,6 +3,12 @@ package com.example.photozhab.presentation.mappers.figures
 import com.example.photozhab.domain.model.canvas.Figure as FigureDomain
 import com.example.photozhab.presentation.model.Figure
 
+/**
+ * [FigureDomain] -> [Figure]
+ *
+ * @receiver [FigureDomain].
+ * @return [Figure].
+ */
 fun FigureDomain.toPresentationLayer(): Figure {
     return when (this) {
         is FigureDomain.Brush -> this.toPresentationLayer()
@@ -14,6 +20,12 @@ fun FigureDomain.toPresentationLayer(): Figure {
     }
 }
 
+/**
+ * [Figure] -> [FigureDomain]
+ *
+ * @receiver [Figure].
+ * @return [FigureDomain].
+ */
 fun Figure.toDomainLayer(): FigureDomain {
     return when (this) {
         is Figure.Brush -> this.toDomainLayer()

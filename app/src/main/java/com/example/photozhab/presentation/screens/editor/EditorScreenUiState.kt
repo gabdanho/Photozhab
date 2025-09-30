@@ -8,6 +8,30 @@ import com.example.photozhab.presentation.model.Figure
 import com.example.photozhab.presentation.model.LoadingState
 import com.example.photozhab.presentation.model.UiMessage
 
+/**
+ * UI состояние экрана редактора.
+ *
+ * @property figures Список текущих фигур на холсте.
+ * @property circleColor Цвет круга.
+ * @property squareColor Цвет квадрата.
+ * @property brushColor Цвет кисти.
+ * @property triangleColor Цвет треугольника.
+ * @property polygonColor Цвет многоугольника.
+ * @property backgroundColor Цвет фона холста.
+ * @property lineColor Цвет линии.
+ * @property brushWidth Толщина кисти.
+ * @property polygonVertices Количество вершин многоугольника.
+ * @property lineWidth Толщина линии.
+ * @property savedProjectIdToDelete ID проекта для удаления.
+ * @property projectNameValue Имя для сохраняемого проекта.
+ * @property savedProjects Список сохранённых проектов.
+ * @property isBrushChosen Выбрана ли кисть.
+ * @property isPanelExpanded Открыта ли панель настроек фигуры
+ * @property currentEditorButton Текущая выбранная кнопка редактора.
+ * @property dialog Текущее состояние диалога.
+ * @property loadingState Состояние загрузки данных.
+ * @property uiMessage Сообщение UI.
+ */
 data class EditorScreenUiState(
     val figures: List<Figure> = emptyList(),
     val circleColor: Long = Color.Green.toColorLong(),

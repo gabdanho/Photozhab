@@ -14,6 +14,13 @@ import androidx.compose.ui.res.stringResource
 import com.example.photozhab.R
 import com.example.photozhab.presentation.ui.theme.defaultDimensions
 
+/**
+ * Диалог подтверждения удаления данных.
+ *
+ * @param onDismiss Действие при отмене.
+ * @param onAccess Действие при подтверждении удаления.
+ * @param modifier Модификатор для внешнего контейнера.
+ */
 @Composable
 fun DeleteDataDialog(
     onDismiss: () -> Unit,

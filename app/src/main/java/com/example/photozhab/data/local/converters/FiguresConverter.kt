@@ -5,6 +5,9 @@ import com.example.photozhab.data.local.model.Figure
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 
+/**
+ * Конвертер для сериализации и десериализации списка фигур в JSON и обратно.
+ */
 object FiguresConverter {
     private val json = Json {
         encodeDefaults = true

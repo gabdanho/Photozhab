@@ -13,6 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
 import com.example.photozhab.presentation.ui.theme.defaultDimensions
 
+/**
+ * Базовое диалоговое окно.
+ *
+ * @param onDismiss Действие при закрытии диалога.
+ * @param modifier Модификатор для внешнего контейнера.
+ * @param content Содержимое диалога, реализуемое через ColumnScope.
+ */
 @Composable
 fun BaseDialog(
     onDismiss: () -> Unit,

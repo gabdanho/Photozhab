@@ -5,6 +5,12 @@ import com.example.photozhab.data.local.model.Figure.Square
 import com.example.photozhab.domain.model.canvas.Offset as OffsetDomain
 import com.example.photozhab.domain.model.canvas.Figure.Square as SquareDomain
 
+/**
+ * [SquareDomain] -> [Square]
+ *
+ * @receiver [SquareDomain].
+ * @return [Square].
+ */
 fun SquareDomain.toDataLayer(): Square {
     return Square(
         color = color,
@@ -14,6 +20,12 @@ fun SquareDomain.toDataLayer(): Square {
     )
 }
 
+/**
+ * [Square] -> [SquareDomain]
+ *
+ * @receiver [Square].
+ * @return [SquareDomain].
+ */
 fun Square.toDomainLayer(): SquareDomain {
     return SquareDomain(
         color = color,

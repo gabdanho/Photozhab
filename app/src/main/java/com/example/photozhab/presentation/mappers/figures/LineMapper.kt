@@ -9,6 +9,13 @@ import com.example.photozhab.domain.model.canvas.Offset as OffsetDomain
 import com.example.photozhab.domain.model.canvas.Figure.Line as LineDomain
 import com.example.photozhab.presentation.model.Figure.Line
 
+/**
+ * [LineDomain] -> [Line]
+ *
+ * @receiver [LineDomain].
+ * @return [Line].
+ */
+
 fun LineDomain.toPresentationLayer(): Line {
     return Line(
         color = Color.fromColorLong(color),
@@ -18,6 +25,13 @@ fun LineDomain.toPresentationLayer(): Line {
         lineWidth = lineWidth
     )
 }
+
+/**
+ * [Line] -> [LineDomain]
+ *
+ * @receiver [Line].
+ * @return [LineDomain].
+ */
 
 fun Line.toDomainLayer(): LineDomain {
     return LineDomain(

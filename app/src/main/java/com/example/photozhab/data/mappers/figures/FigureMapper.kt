@@ -3,6 +3,12 @@ package com.example.photozhab.data.mappers.figures
 import com.example.photozhab.data.local.model.Figure
 import com.example.photozhab.domain.model.canvas.Figure as FigureDomain
 
+/**
+ * [FigureDomain] -> [Figure]
+ *
+ * @receiver [FigureDomain].
+ * @return [Figure].
+ */
 fun FigureDomain.toDataLayer(): Figure {
     return when (this) {
         is FigureDomain.Brush -> this.toDataLayer()
@@ -14,6 +20,12 @@ fun FigureDomain.toDataLayer(): Figure {
     }
 }
 
+/**
+ * [Figure] -> [FigureDomain]
+ *
+ * @receiver [Figure].
+ * @return [FigureDomain].
+ */
 fun Figure.toDomainLayer(): FigureDomain {
     return when (this) {
         is Figure.Brush -> this.toDomainLayer()

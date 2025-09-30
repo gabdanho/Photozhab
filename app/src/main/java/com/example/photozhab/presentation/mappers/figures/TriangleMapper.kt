@@ -8,6 +8,12 @@ import com.example.photozhab.domain.model.canvas.Offset as OffsetDomain
 import com.example.photozhab.domain.model.canvas.Figure.Triangle as TriangleDomain
 import com.example.photozhab.presentation.model.Figure.Triangle
 
+/**
+ * [TriangleDomain] -> [Triangle]
+ *
+ * @receiver [TriangleDomain].
+ * @return [Triangle].
+ */
 fun TriangleDomain.toPresentationLayer(): Triangle {
     return Triangle(
         color = Color.fromColorLong(color),
@@ -17,6 +23,12 @@ fun TriangleDomain.toPresentationLayer(): Triangle {
     )
 }
 
+/**
+ * [Triangle] -> [TriangleDomain]
+ *
+ * @receiver [Triangle].
+ * @return [TriangleDomain].
+ */
 fun Triangle.toDomainLayer(): TriangleDomain {
     return TriangleDomain(
         color = color.toColorLong(),

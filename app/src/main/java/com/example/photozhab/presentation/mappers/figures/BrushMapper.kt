@@ -9,6 +9,12 @@ import com.example.photozhab.presentation.model.PathData
 import com.example.photozhab.presentation.model.Figure.Brush
 import com.example.photozhab.domain.model.canvas.Figure.Brush as BrushDomain
 
+/**
+ * [Brush] -> [BrushDomain]
+ *
+ * @receiver [BrushDomain].
+ * @return [Brush].
+ */
 fun BrushDomain.toPresentationLayer(): Brush {
     return Brush(
         color = Color.fromColorLong(color),
@@ -17,6 +23,12 @@ fun BrushDomain.toPresentationLayer(): Brush {
     )
 }
 
+/**
+ * [BrushDomain] -> [Brush]
+ *
+ * @receiver [Brush].
+ * @return [BrushDomain].
+ */
 fun Brush.toDomainLayer(): BrushDomain {
     return BrushDomain(
         color = color.toColorLong(),

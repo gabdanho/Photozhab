@@ -2,9 +2,16 @@ package com.example.photozhab.presentation.model
 
 import androidx.compose.ui.graphics.Path
 
+/**
+ * Сериализуемый путь для кисти.
+ *
+ * @param pathPointsList Список точек пути.
+ */
 data class PathData(
     val pathPointsList: List<PathPoints> = emptyList(),
 ) {
+
+    /** Преобразует PathData в Compose Path. */
     fun toPath(): Path {
         val path = Path()
         if (pathPointsList.isNotEmpty()) {

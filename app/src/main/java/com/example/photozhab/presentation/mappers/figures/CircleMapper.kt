@@ -8,6 +8,12 @@ import com.example.photozhab.domain.model.canvas.Figure.Circle as CircleDomain
 import com.example.photozhab.presentation.model.Figure.Circle
 import com.example.photozhab.domain.model.canvas.Offset as OffsetDomain
 
+/**
+ * [Circle] -> [CircleDomain]
+ *
+ * @receiver [CircleDomain].
+ * @return [Circle].
+ */
 fun CircleDomain.toPresentationLayer(): Circle {
     return Circle(
         color = Color.fromColorLong(color),
@@ -17,6 +23,12 @@ fun CircleDomain.toPresentationLayer(): Circle {
     )
 }
 
+/**
+ * [CircleDomain] -> [Circle]
+ *
+ * @receiver [Circle].
+ * @return [CircleDomain].
+ */
 fun Circle.toDomainLayer(): CircleDomain {
     return CircleDomain(
         color = color.toColorLong(),

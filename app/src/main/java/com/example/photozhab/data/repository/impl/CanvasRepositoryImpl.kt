@@ -10,6 +10,11 @@ import com.example.photozhab.domain.model.canvas.Canvas
 import com.example.photozhab.domain.model.canvas.CanvasInfo
 import java.io.IOException
 
+/**
+ * Репозиторий для работы с Canvas в локальной базе данных.
+ *
+ * @param dao DAO для доступа к данным.
+ */
 class CanvasRepositoryImpl(
     private val dao: CanvasDao,
 ) : CanvasRepository {

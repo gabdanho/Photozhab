@@ -71,6 +71,11 @@ import com.example.photozhab.presentation.utils.saveToBitmap
 import com.example.photozhab.presentation.utils.showUiMessage
 import kotlinx.coroutines.launch
 
+/**
+ * Экран редактора изображений.
+ *
+ * @param viewModel ViewModel экрана редактора.
+ */
 @Composable
 fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenViewModel>()) {
     val uiState by viewModel.uiState.collectAsState()
@@ -326,6 +331,15 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
     }
 }
 
+/**
+ * Холст для рисования кистью.
+ *
+ * @param brushColor Текущий цвет кисти.
+ * @param brushWidth Толщина кисти.
+ * @param onPathDrawn Колбек при завершении рисования пути.
+ * @param onDrag Колбек при перетаскивании (например, скрыть панель инструментов).
+ * @param modifier Модификатор Compose.
+ */
 @Composable
 private fun DrawingCanvas(
     brushColor: Color,
@@ -383,6 +397,13 @@ private fun DrawingCanvas(
     }
 }
 
+/**
+ * Панель инструментов с кнопками выбора инструментов.
+ *
+ * @param buttons Список кнопок редактора.
+ * @param isBrushChosen Признак того, что выбрана кисть.
+ * @param modifier Модификатор Compose.
+ */
 @Composable
 private fun ToolPanel(
     buttons: List<EditorButtonSettings>,
@@ -399,6 +420,11 @@ private fun ToolPanel(
     }
 }
 
+/**
+ * Панель с кнопками состояния фигур (отмена/повтор/сохранение/удаление).
+ *
+ * @param modifier Модификатор Compose.
+ */
 @Composable
 private fun StateFigures(modifier: Modifier = Modifier) {
     val toolsStateFunctions = LocalToolsStateFunctions.current
@@ -448,6 +474,13 @@ private fun StateFigures(modifier: Modifier = Modifier) {
     }
 }
 
+/**
+ * Горизонтальная панель с кнопками инструментов.
+ *
+ * @param isBrushChosen Признак того, что выбрана кисть.
+ * @param buttons Список кнопок редактора.
+ * @param modifier Модификатор Compose.
+ */
 @Composable
 private fun ButtonsPanel(
     isBrushChosen: Boolean,
@@ -471,6 +504,11 @@ private fun ButtonsPanel(
     }
 }
 
+/**
+ * Панель настроек для выбранной фигуры.
+ *
+ * @param modifier Модификатор Compose.
+ */
 @Composable
 private fun FigureSettingsPanel(modifier: Modifier = Modifier) {
     val buttonsProperties = LocalEditorButtonsProperties.current
@@ -500,6 +538,8 @@ private fun FigureSettingsPanel(modifier: Modifier = Modifier) {
         }
     }
 }
+
+// Эдиторы фигур
 
 @Composable
 private fun BrushEditor(modifier: Modifier = Modifier) {

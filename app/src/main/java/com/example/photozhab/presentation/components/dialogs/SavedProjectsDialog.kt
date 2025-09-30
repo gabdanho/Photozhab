@@ -20,6 +20,16 @@ import com.example.photozhab.R
 import com.example.photozhab.presentation.model.CanvasInfo
 import com.example.photozhab.presentation.ui.theme.defaultDimensions
 
+/**
+ * Диалог для отображения сохранённых проектов.
+ *
+ * @param canvases Список сохранённых холстов.
+ * @param onDismiss Действие при закрытии диалога.
+ * @param onSave Действие при сохранении нового проекта.
+ * @param onDelete Действие при удалении проекта, передаётся id.
+ * @param onOpen Действие при открытии проекта, передаётся id.
+ * @param modifier Модификатор для внешнего контейнера.
+ */
 @Composable
 fun SavedProjectDialog(
     canvases: List<CanvasInfo>,
@@ -59,6 +69,14 @@ fun SavedProjectDialog(
     }
 }
 
+/**
+ * Отображение информации о сохранённом проекте с возможностью открыть или удалить.
+ *
+ * @param canvasInfo Информация о холсте.
+ * @param onOpen Действие при открытии проекта.
+ * @param onDelete Действие при удалении проекта.
+ * @param modifier Модификатор для внешнего контейнера.
+ */
 @Composable
 private fun SaveInfo(
     canvasInfo: CanvasInfo,

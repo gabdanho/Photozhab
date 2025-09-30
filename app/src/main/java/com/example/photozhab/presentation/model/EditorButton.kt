@@ -1,5 +1,8 @@
 package com.example.photozhab.presentation.model
 
+/**
+ * Типы кнопок редактора.
+ */
 enum class EditorButton {
     CIRCLE,
     SQUARE,

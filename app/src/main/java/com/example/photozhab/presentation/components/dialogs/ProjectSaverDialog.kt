@@ -9,6 +9,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.photozhab.R
 
+/**
+ * Диалог для сохранения проекта с вводом имени.
+ *
+ * @param name Текущее имя проекта.
+ * @param onNameChanged Событие при изменении имени.
+ * @param onDismiss Действие при закрытии диалога.
+ * @param onSave Действие при сохранении.
+ * @param modifier Модификатор для внешнего контейнера.
+ */
 @Composable
 fun ProjectSaverDialog(
     name: String,

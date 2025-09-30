@@ -5,6 +5,12 @@ import com.example.photozhab.data.mappers.figures.toDataLayer
 import com.example.photozhab.data.mappers.figures.toDomainLayer
 import com.example.photozhab.domain.model.canvas.Canvas as CanvasDomain
 
+/**
+ * [CanvasDomain] -> [Canvas]
+ *
+ * @receiver [CanvasDomain].
+ * @return [Canvas].
+ */
 fun CanvasDomain.toDataLayer(): Canvas {
     return Canvas(
         id = id,
@@ -14,6 +20,12 @@ fun CanvasDomain.toDataLayer(): Canvas {
     )
 }
 
+/**
+ * [Canvas] -> [CanvasDomain]
+ *
+ * @receiver [Canvas].
+ * @return [CanvasDomain].
+ */
 fun Canvas.toDomainLayer(): CanvasDomain {
     return CanvasDomain(
         id = id,

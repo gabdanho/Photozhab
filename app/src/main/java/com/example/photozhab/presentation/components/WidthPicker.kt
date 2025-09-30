@@ -18,6 +18,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.example.photozhab.R
 
+/**
+ * Слайдер для выбора ширины линии.
+ *
+ * @param currentWidth Текущая ширина линии.
+ * @param changeWidth Событие при изменении ширины линии.
+ * @param modifier Модификатор для внешнего контейнера.
+ * @param steps Количество шагов слайдера.
+ */
 @Composable
 fun WidthPicker(
     currentWidth: Float,

@@ -24,6 +24,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
+/**
+ * ViewModel экрана редактора.
+ *
+ * Управляет состоянием холста, фигурами и взаимодействием с репозиториями
+ * для сохранения и загрузки проектов.
+ *
+ * @property canvasRepository Репозиторий для работы с холстами.
+ * @property galleryRepository Репозиторий для сохранения изображений в галерею.
+ */
 @HiltViewModel
 class EditorScreenViewModel @Inject constructor(
     private val canvasRepository: CanvasRepository,
