@@ -5,13 +5,13 @@ import com.example.photozhab.domain.model.canvas.CanvasInfo
 
 interface CanvasRepository {
 
-    suspend fun saveCanvas(canvas: Canvas): Boolean
+    suspend fun saveCanvas(canvas: Canvas)
 
-    suspend fun deleteCanvas(id: Int): Boolean
+    suspend fun deleteCanvas(id: Int)
 
     suspend fun getCanvasById(id: Int): Canvas?
 
-    suspend fun saveTempCanvas(canvas: Canvas): Boolean
+    suspend fun saveTempCanvas(canvas: Canvas)
 
     suspend fun getTempCanvas(): Canvas?
 

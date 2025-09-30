@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,7 +33,7 @@ import kotlin.math.sqrt
 sealed class Figure {
 
     @Composable
-    open fun draw() {}
+    open fun DrawFigure() {}
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -43,7 +44,7 @@ sealed class Figure {
     ) : Figure() {
 
         @Composable
-        override fun draw() {
+        override fun DrawFigure() {
             Canvas(modifier = Modifier.Companion.fillMaxSize()) {
                 drawPath(
                     path = path.toPath(),
@@ -61,10 +62,10 @@ sealed class Figure {
         var scale: Float = 1f,
     ) : Figure() {
         @Composable
-        override fun draw() {
+        override fun DrawFigure() {
             var localOffset by remember { mutableStateOf(offset) }
-            var localAngle by remember { mutableStateOf(angle) }
-            var localScale by remember { mutableStateOf(scale) }
+            var localAngle by remember { mutableFloatStateOf(angle) }
+            var localScale by remember { mutableFloatStateOf(scale) }
 
             Canvas(
                 modifier = Modifier.Companion
@@ -112,13 +113,13 @@ sealed class Figure {
     ) : Figure() {
 
         @Composable
-        override fun draw() {
+        override fun DrawFigure() {
             val density = LocalDensity.current
 
             var localOffset by remember { mutableStateOf(offset) }
-            var localAngle by remember { mutableStateOf(angle) }
+            var localAngle by remember { mutableFloatStateOf(angle) }
             var localWidthDp by remember { mutableStateOf(widthDp) }
-            var widthPx by remember { mutableStateOf(density.run { widthDp.toPx() }) }
+            var widthPx by remember { mutableFloatStateOf(density.run { widthDp.toPx() }) }
 
             Canvas(
                 modifier = Modifier.Companion
@@ -169,10 +170,10 @@ sealed class Figure {
     ) : Figure() {
 
         @Composable
-        override fun draw() {
+        override fun DrawFigure() {
             var localOffset by remember { mutableStateOf(offset) }
-            var localAngle by remember { mutableStateOf(angle) }
-            var localScale by remember { mutableStateOf(scale) }
+            var localAngle by remember { mutableFloatStateOf(angle) }
+            var localScale by remember { mutableFloatStateOf(scale) }
 
             Canvas(
                 modifier = Modifier.Companion
@@ -224,10 +225,10 @@ sealed class Figure {
     ) : Figure() {
 
         @Composable
-        override fun draw() {
+        override fun DrawFigure() {
             var localOffset by remember { mutableStateOf(offset) }
-            var localAngle by remember { mutableStateOf(angle) }
-            var localScale by remember { mutableStateOf(scale) }
+            var localAngle by remember { mutableFloatStateOf(angle) }
+            var localScale by remember { mutableFloatStateOf(scale) }
 
             Canvas(
                 modifier = Modifier.Companion
@@ -274,10 +275,10 @@ sealed class Figure {
     ) : Figure() {
 
         @Composable
-        override fun draw() {
+        override fun DrawFigure() {
             var localOffset by remember { mutableStateOf(offset) }
-            var localAngle by remember { mutableStateOf(angle) }
-            var localScale by remember { mutableStateOf(scale) }
+            var localAngle by remember { mutableFloatStateOf(angle) }
+            var localScale by remember { mutableFloatStateOf(scale) }
 
             Canvas(
                 modifier = Modifier.Companion

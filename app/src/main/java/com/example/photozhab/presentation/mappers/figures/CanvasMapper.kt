@@ -8,7 +8,7 @@ fun Canvas.toPresentationLayer(): CanvasSave {
         id = id,
         name = name,
         figures = figures.map { it.toPresentationLayer() },
-        backgroundColor = backgroundColor
+        background = background
     )
 }
 
@@ -17,6 +17,6 @@ fun CanvasSave.toDomainLayer(): Canvas {
         id = id,
         name = name,
         figures = figures.map { it.toDomainLayer() },
-        backgroundColor = backgroundColor
+        background = background
     )
 }

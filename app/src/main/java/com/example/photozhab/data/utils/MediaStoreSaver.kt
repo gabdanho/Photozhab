@@ -1,7 +1,7 @@
 package com.example.photozhab.data.utils
 
+import android.content.ContentResolver
 import android.content.ContentValues
-import android.content.Context
 import android.graphics.Bitmap
 import android.os.Environment
 import android.provider.MediaStore
@@ -9,7 +9,7 @@ import java.io.IOException
 
 object MediaStoreSaver {
 
-    fun saveBitmapToGallery(bitmap: Bitmap, context: Context) {
+    fun saveBitmapToGallery(bitmap: Bitmap, resolver: ContentResolver) {
         val fileName = "photozhab_${System.currentTimeMillis()}.png"
         val mimeType = "image/png"
         val folderName = "Photozhab"
@@ -21,7 +21,6 @@ object MediaStoreSaver {
             put(MediaStore.Images.Media.IS_PENDING, 1)
         }
 
-        val resolver = context.contentResolver
         val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
 
         try {
@@ -37,7 +36,7 @@ object MediaStoreSaver {
                 resolver.update(uri, values, null, null)
             }
         } catch (e: Exception) {
-            throw IOException(e.message)
+            throw IOException("Error saving bitmap", e)
         }
     }
 }

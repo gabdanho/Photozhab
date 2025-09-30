@@ -30,10 +30,7 @@ data class EditorScreenUiState(
     val isPanelExpanded: Boolean = false,
     val currentEditorButton: EditorButton? = null,
 
-    val isShowWarningDialog: Boolean = false,
-    val isShowSavedProjectsDialog: Boolean = false,
-    val isShowProjectSaverDialog: Boolean = false,
-    val isShowDeleteSavedProject: Boolean = false,
+    val dialog: EditorScreensDialog = EditorScreensDialog.None,
 
     val loadingState: LoadingState = LoadingState.Success,
     val uiMessage: UiMessage? = null,

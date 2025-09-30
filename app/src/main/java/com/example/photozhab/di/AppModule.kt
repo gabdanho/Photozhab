@@ -39,6 +39,6 @@ object AppModule {
     @Provides
     @Singleton
     fun provideGalleryRepository(@ApplicationContext context: Context): GalleryRepository {
-        return GalleryRepositoryImpl(context = context)
+        return GalleryRepositoryImpl(resolver = context.contentResolver)
     }
 }

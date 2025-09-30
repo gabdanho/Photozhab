@@ -4,9 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RestoreFromTrash
 import androidx.compose.material3.Button
@@ -19,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.window.Dialog
 import com.example.photozhab.R
 import com.example.photozhab.presentation.model.CanvasInfo
 import com.example.photozhab.presentation.ui.theme.defaultDimensions
@@ -33,46 +29,32 @@ fun SavedProjectDialog(
     onOpen: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Dialog(onDismissRequest = onDismiss) {
-        Card(modifier = modifier) {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(defaultDimensions.verySmall),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(defaultDimensions.medium)
-            ) {
-                item {
-                    Text(
-                        text = stringResource(R.string.text_saved_projects),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-                if (canvases.isNotEmpty()) {
-                    items(canvases) { canvasInfo ->
-                        SaveInfo(
-                            canvasInfo = canvasInfo,
-                            onOpen = onOpen,
-                            onDelete = onDelete,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                } else {
-                    item {
-                        Text(
-                            text = stringResource(R.string.text_there_are_no_saved_projects),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                }
-                item {
-                    Button(
-                        onClick = { onSave() }
-                    ) {
-                        Text(text = stringResource(R.string.text_save_this_project))
-                    }
-                }
+    BaseDialog(onDismiss, modifier) {
+        Text(
+            text = stringResource(R.string.text_saved_projects),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+        if (canvases.isNotEmpty()) {
+            canvases.forEach { canvasInfo ->
+                SaveInfo(
+                    canvasInfo = canvasInfo,
+                    onOpen = onOpen,
+                    onDelete = onDelete,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
+        } else {
+            Text(
+                text = stringResource(R.string.text_there_are_no_saved_projects),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+        Button(
+            onClick = { onSave() }
+        ) {
+            Text(text = stringResource(R.string.text_save_this_project))
         }
     }
 }

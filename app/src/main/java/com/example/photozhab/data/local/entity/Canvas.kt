@@ -17,6 +17,8 @@ data class Canvas(
     val background: Long = 0L,
 ) {
     companion object {
-        private const val TABLE_CANVAS = "canvas"
+        const val TABLE_CANVAS = "canvas"
+        const val TEMP_CANVAS_ID = 1
+        const val TEMP_CANVAS_NAME = "temp"
     }
 }

@@ -172,7 +172,7 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
                 }
         ) {
             uiState.figures.forEach { figure ->
-                figure.draw()
+                figure.DrawFigure()
             }
             if (uiState.isBrushChosen) {
                 DrawingCanvas(
@@ -232,10 +232,10 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
                         viewModel.saveToGallery(bitmap = graphicsLayer.saveToBitmap())
                     }
                 },
-                onSavesClick = { viewModel.changeIsShowSavedProjectsDialog(value = true) },
+                onSavesClick = { viewModel.changeDialog(dialog = EditorScreensDialog.SavedProjects) },
                 onPrevStateClick = { viewModel.prevState() },
                 onForwardStateClick = { viewModel.forwardState() },
-                onDeleteAllClick = { viewModel.changeIsShowWarningDialog(value = true) },
+                onDeleteAllClick = { viewModel.changeDialog(dialog = EditorScreensDialog.Warning) },
                 changeCurrentEditorButton = { viewModel.changeCurrentEditorButton(editorButton = it) },
                 changeIsPanelExpanded = { viewModel.changeIsPanelExpanded(value = it) },
                 onPanelClick = { viewModel.changeCurrentEditorButton(null) },
@@ -256,66 +256,63 @@ fun EditorScreen(viewModel: EditorScreenViewModel = hiltViewModel<EditorScreenVi
         }
     }
 
-    when {
-        uiState.isShowWarningDialog -> {
-            DeleteDataDialog(
-                onDismiss = { viewModel.changeIsShowWarningDialog(value = false) },
-                onAccess = {
-                    viewModel.deleteAllFiguresAndClearBackground()
-                    viewModel.changeIsShowWarningDialog(value = false)
-                }
-            )
-        }
-
-        uiState.isShowDeleteSavedProject -> {
+    when (uiState.dialog) {
+        EditorScreensDialog.DeleteSavedProject -> {
             DeleteDataDialog(
                 onDismiss = {
-                    viewModel.changeIsShowDeleteSavedProject(value = false)
-                    viewModel.changeIsShowSavedProjectsDialog(value = true)
+                    viewModel.changeDialog(dialog = EditorScreensDialog.SavedProjects)
                 },
                 onAccess = {
                     viewModel.deleteProject()
-                    viewModel.changeIsShowDeleteSavedProject(value = false)
-                    viewModel.changeIsShowSavedProjectsDialog(value = true)
+                    viewModel.changeDialog(dialog = EditorScreensDialog.SavedProjects)
                 }
             )
         }
 
-        uiState.isShowSavedProjectsDialog -> {
+        EditorScreensDialog.ProjectSaver -> {
+            ProjectSaverDialog(
+                name = uiState.projectNameValue,
+                onNameChanged = { viewModel.changeProjectNameValue(value = it) },
+                onDismiss = {
+                    viewModel.changeDialog(dialog = EditorScreensDialog.SavedProjects)
+                },
+                onSave = {
+                    viewModel.saveProject()
+                    viewModel.changeDialog(dialog = EditorScreensDialog.None)
+                }
+            )
+        }
+
+        EditorScreensDialog.SavedProjects -> {
             SavedProjectDialog(
                 canvases = uiState.savedProjects,
-                onDismiss = { viewModel.changeIsShowSavedProjectsDialog(value = false) },
+                onDismiss = { viewModel.changeDialog(dialog = EditorScreensDialog.None) },
                 onSave = {
-                    viewModel.changeIsShowSavedProjectsDialog(value = false)
-                    viewModel.changeIsShowProjectSaverDialog(value = true)
+                    viewModel.changeDialog(dialog = EditorScreensDialog.ProjectSaver)
                 },
                 onDelete = { id ->
                     viewModel.changeSavedProjectIdToDelete(id)
-                    viewModel.changeIsShowSavedProjectsDialog(value = false)
-                    viewModel.changeIsShowDeleteSavedProject(value = true)
+                    viewModel.changeDialog(dialog = EditorScreensDialog.DeleteSavedProject)
                 },
                 onOpen = { id ->
                     viewModel.getProjectById(id)
-                    viewModel.changeIsShowSavedProjectsDialog(value = false)
+                    viewModel.changeDialog(dialog = EditorScreensDialog.None)
                 },
                 modifier = Modifier.fillMaxSize(0.9f)
             )
         }
 
-        uiState.isShowProjectSaverDialog -> {
-            ProjectSaverDialog(
-                name = uiState.projectNameValue,
-                onNameChanged = { viewModel.changeProjectNameValue(value = it) },
-                onDismiss = {
-                    viewModel.changeIsShowProjectSaverDialog(value = false)
-                    viewModel.changeIsShowSavedProjectsDialog(value = true)
-                },
-                onSave = {
-                    viewModel.saveProject()
-                    viewModel.changeIsShowProjectSaverDialog(value = false)
+        EditorScreensDialog.Warning -> {
+            DeleteDataDialog(
+                onDismiss = { viewModel.changeDialog(dialog = EditorScreensDialog.None) },
+                onAccess = {
+                    viewModel.deleteAllFiguresAndClearBackground()
+                    viewModel.changeDialog(dialog = EditorScreensDialog.None)
                 }
             )
         }
+
+        EditorScreensDialog.None -> {}
     }
 
     if (uiState.loadingState is LoadingState.Loading) {

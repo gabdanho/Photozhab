@@ -64,26 +64,17 @@ class EditorScreenViewModel @Inject constructor(
     fun deleteAllFiguresAndClearBackground() {
         _uiState.update { it.copy(figures = emptyList()) }
         deletedFigures.clear()
-        _uiState.update { state -> state.copy(backgroundColor = DEFAULT_BACKGROUND_COLOR) }
+        _uiState.update { it.copy(backgroundColor = DEFAULT_BACKGROUND_COLOR) }
     }
 
     fun changeProjectNameValue(value: String) =
         _uiState.update { it.copy(projectNameValue = value) }
 
     fun changeSavedProjectIdToDelete(id: Int) =
-        _uiState.update { state -> state.copy(savedProjectIdToDelete = id) }
+        _uiState.update { it.copy(savedProjectIdToDelete = id) }
 
-    fun changeIsShowWarningDialog(value: Boolean) =
-        _uiState.update { it.copy(isShowWarningDialog = value) }
-
-    fun changeIsShowDeleteSavedProject(value: Boolean) =
-        _uiState.update { it.copy(isShowDeleteSavedProject = value) }
-
-    fun changeIsShowSavedProjectsDialog(value: Boolean) =
-        _uiState.update { it.copy(isShowSavedProjectsDialog = value) }
-
-    fun changeIsShowProjectSaverDialog(value: Boolean) =
-        _uiState.update { it.copy(isShowProjectSaverDialog = value) }
+    fun changeDialog(dialog: EditorScreensDialog) =
+        _uiState.update { it.copy(dialog = dialog) }
 
     fun changeIsBrushChosen(value: Boolean) =
         _uiState.update { it.copy(isBrushChosen = value) }
@@ -122,7 +113,7 @@ class EditorScreenViewModel @Inject constructor(
             try {
                 val newCanvas = CanvasSave(
                     name = _uiState.value.projectNameValue,
-                    backgroundColor = _uiState.value.backgroundColor,
+                    background = _uiState.value.backgroundColor,
                     figures = _uiState.value.figures
                 ).toDomainLayer()
 
@@ -154,9 +145,9 @@ class EditorScreenViewModel @Inject constructor(
             viewModelScope.launch {
                 val id = _uiState.value.savedProjectIdToDelete
                 canvasRepository.deleteCanvas(id)
-                _uiState.update { state ->
-                    state.copy(
-                        savedProjects = state.savedProjects.filterNot { it.id == id },
+                _uiState.update {
+                    it.copy(
+                        savedProjects = it.savedProjects.filterNot { project -> project.id == id },
                         loadingState = LoadingState.Success,
                         uiMessage = UiMessage(textResName = StringResNamePresentation.SUCCESS_DELETE_PROJECT)
                     )
@@ -176,12 +167,12 @@ class EditorScreenViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(loadingState = LoadingState.Loading) }
             try {
-                canvasRepository.getCanvasById(id)?.let {
-                    val canvas = it.toPresentationLayer()
-                    _uiState.update { state ->
-                        state.copy(
+                canvasRepository.getCanvasById(id)?.let { project ->
+                    val canvas = project.toPresentationLayer()
+                    _uiState.update {
+                        it.copy(
                             figures = canvas.figures.toMutableStateList(),
-                            backgroundColor = canvas.backgroundColor
+                            backgroundColor = canvas.background
                         )
                     }
                 }
@@ -210,7 +201,7 @@ class EditorScreenViewModel @Inject constructor(
 
             val currentCanvas = CanvasSave(
                 figures = state.figures,
-                backgroundColor = state.backgroundColor
+                background = state.backgroundColor
             ).toDomainLayer()
             canvasRepository.saveTempCanvas(currentCanvas)
         }
@@ -245,18 +236,18 @@ class EditorScreenViewModel @Inject constructor(
     private fun getSavedProjects() {
         viewModelScope.launch {
             val canvases = canvasRepository.getCanvases().map { it.toPresentationLayer() }
-            _uiState.update { state -> state.copy(savedProjects = canvases) }
+            _uiState.update { it.copy(savedProjects = canvases) }
         }
     }
 
     private fun getTempCanvas() {
         viewModelScope.launch {
-            canvasRepository.getTempCanvas()?.let {
-                val canvas = it.toPresentationLayer()
-                _uiState.update { state ->
-                    state.copy(
+            canvasRepository.getTempCanvas()?.let { temp ->
+                val canvas = temp.toPresentationLayer()
+                _uiState.update {
+                    it.copy(
                         figures = canvas.figures.toMutableStateList(),
-                        backgroundColor = canvas.backgroundColor
+                        backgroundColor = canvas.background
                     )
                 }
             }

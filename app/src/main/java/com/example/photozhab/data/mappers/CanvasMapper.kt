@@ -10,7 +10,7 @@ fun CanvasDomain.toDataLayer(): Canvas {
         id = id,
         name = name,
         figures = figures.map { it.toDataLayer() },
-        background = backgroundColor
+        background = background
     )
 }
 
@@ -19,6 +19,6 @@ fun Canvas.toDomainLayer(): CanvasDomain {
         id = id,
         name = name,
         figures = figures.map { it.toDomainLayer() },
-        backgroundColor = background
+        background = background
     )
 }
