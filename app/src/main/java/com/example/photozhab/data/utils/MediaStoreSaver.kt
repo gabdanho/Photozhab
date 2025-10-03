@@ -7,6 +7,10 @@ import android.os.Environment
 import android.provider.MediaStore
 import java.io.IOException
 
+private val FILE_NAME = "photozhab_${System.currentTimeMillis()}.png"
+private const val MIME_TYPE = "image/png"
+private const val FOLDER_NAME = "Photozhab"
+
 /**
  * Утилитный объект для сохранения Bitmap изображений в галерею устройства.
  */
@@ -20,14 +24,10 @@ object MediaStoreSaver {
      * @throws IOException если произошла ошибка при сохранении.
      */
     fun saveBitmapToGallery(bitmap: Bitmap, resolver: ContentResolver) {
-        val fileName = "photozhab_${System.currentTimeMillis()}.png"
-        val mimeType = "image/png"
-        val folderName = "Photozhab"
-
         val values = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
-            put(MediaStore.Images.Media.MIME_TYPE, mimeType)
-            put(MediaStore.Images.Media.RELATIVE_PATH, "${Environment.DIRECTORY_PICTURES}/$folderName")
+            put(MediaStore.Images.Media.DISPLAY_NAME, FILE_NAME)
+            put(MediaStore.Images.Media.MIME_TYPE, MIME_TYPE)
+            put(MediaStore.Images.Media.RELATIVE_PATH, "${Environment.DIRECTORY_PICTURES}/$FOLDER_NAME")
             put(MediaStore.Images.Media.IS_PENDING, 1)
         }
 
